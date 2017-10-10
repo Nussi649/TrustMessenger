@@ -5,4 +5,6 @@ package backend;
  */
 
 public class Model {
+
+    PublicKey publicKey;
 }
