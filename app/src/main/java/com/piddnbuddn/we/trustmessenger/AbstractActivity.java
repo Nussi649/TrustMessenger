@@ -23,6 +23,33 @@ public abstract class AbstractActivity extends Activity {
         return controller;
     }
 
+    protected void startThreadWithFinish(final int workID) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doWork(workID);
+                afterWorkFinish(workID);
+            }
+        });
+    }
+
+    protected void startThreadWithoutFinish(final int workID) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doWork(workID);
+            }
+        });
+    }
+
+    protected void doWork(final int workID) {
+
+    }
+
+    protected void afterWorkFinish(final int workID) {
+
+    }
+
     protected void showToast(int resId) {
         Context context = getApplicationContext();
         Toast toast = Toast.makeText(context, resId, Toast.LENGTH_SHORT);

@@ -6,4 +6,6 @@ package backend;
 
 public class Const {
     public static String CREDITS = "Piddn&Buddn Co.";
+
+    public static int DO_REGISTER_CODE = 1;
 }
