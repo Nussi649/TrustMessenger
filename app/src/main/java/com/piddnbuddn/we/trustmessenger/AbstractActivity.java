@@ -2,10 +2,12 @@ package com.piddnbuddn.we.trustmessenger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import backend.Model;
@@ -35,6 +37,15 @@ public abstract class AbstractActivity extends Activity {
         return controller;
     }
 
+    protected void doWork(final int workID) {
+
+    }
+
+    protected void afterWorkFinish(final int workID) {
+
+    }
+
+    //region Thread starting Funtions
     protected void startThreadWithFinish(final int workID) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -54,13 +65,11 @@ public abstract class AbstractActivity extends Activity {
         });
     }
 
-    protected void doWork(final int workID) {
-
+    protected void startActivity(Class<? extends AbstractActivity> target) {
+        Intent intent = new Intent(this, target);
+        startActivity(intent);
     }
-
-    protected void afterWorkFinish(final int workID) {
-
-    }
+    //endregion
 
     //region Toast Functions
     protected void showToast(int resId) {
@@ -141,28 +150,28 @@ public abstract class AbstractActivity extends Activity {
     }
     //endregion
 
-    protected void startActivity(Class<? extends AbstractActivity> target) {
-        Intent intent = new Intent(this, target);
-        startActivity(intent);
-    }
-
     protected void showSetPasswordDialog() {
         DialogInterface.OnClickListener accept = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                EditText pw = (EditText) ((AlertDialog)dialog).findViewById(R.id.setPassword_editText);
+                setPassword(pw.getText().toString());
+                dialog.dismiss();
             }
         };
         showCustomDialog(getString(R.string.dialog_title_password), getString(R.string.dialog_message_password), R.layout.set_password_dialog, accept, getDoNothingClickListener());
     }
 
+    private void setPassword(String newPW) {
+        getController().setPassword(newPW, this);
+    }
 
 
     protected DialogInterface.OnClickListener getDoNothingClickListener() {
         DialogInterface.OnClickListener re = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                dialog.dismiss();
             }
         };
         return re;

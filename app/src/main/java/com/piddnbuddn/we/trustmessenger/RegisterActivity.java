@@ -20,6 +20,8 @@ public class RegisterActivity extends AbstractActivity {
 
     private PrivateKey newPrivKey;
     private PublicKey newPubKey;
+    private String username;
+    private String signedUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,10 @@ public class RegisterActivity extends AbstractActivity {
             case GENERATE_KEY:
                 newPrivKey = PrivateKey.generateRandomKey();
                 newPubKey = PublicKey.calculateFromPrivateKey(newPrivKey);
+                signedUsername = newPrivKey.sign(username);
                 break;
             case SEND_TO_SERVER:
+                sendToServer(newPubKey, signedUsername);
                 break;
             default:
                 break;
@@ -49,6 +53,9 @@ public class RegisterActivity extends AbstractActivity {
                 startThreadWithFinish(SEND_TO_SERVER);
                 break;
             case SEND_TO_SERVER:
+                getModel().username = username;
+                getModel().privateKey = newPrivKey;
+                getModel().publicKey = newPubKey;
                 startActivity(OverviewActivity.class);
                 break;
             default:
@@ -66,14 +73,16 @@ public class RegisterActivity extends AbstractActivity {
         });
     }
 
+    private void sendToServer(PublicKey publicKey, String signedName) {
+
+    }
+
     public void doRegister() {
         String name = ((EditText)findViewById(R.id.register_name_editText)).getText().toString();
         if (name.equals("")) {
             showToast(R.string.error_name_empty);
         } else {
-            PrivateKey newPrivKey = PrivateKey.generateRandomKey();
-            PublicKey newPubKey = PublicKey.calculateFromPrivateKey(newPrivKey);
-            String signedName = newPrivKey.sign(name);
+            username = name;
             startThreadWithFinish(GENERATE_KEY);
         }
     }

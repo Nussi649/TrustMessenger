@@ -7,6 +7,7 @@ package backend;
 public class Model {
 
     public PublicKey publicKey;
+    public PrivateKey privateKey;
     public String username;
     public String password;
 }

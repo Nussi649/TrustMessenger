@@ -5,7 +5,13 @@ package backend;
  */
 
 public class Const {
-    public static String CREDITS = "Piddn&Buddn Co.";
+    public static final String CREDITS = "Piddn&Buddn Co.";
 
-    public static int DO_REGISTER_CODE = 1;
+    public static final String FILENAME_USERNAME = "username";
+    public static final String FILENAME_PASSWORD = "credentials";
+    public static final String FILENAME_PRIVATE_KEY = "privateKey";
+
+    // PERMISSION CODES
+    public static final int REQUEST_READ_CONTACTS = 1;
+    public static final int REQUEST_INTERNET = 2;
 }

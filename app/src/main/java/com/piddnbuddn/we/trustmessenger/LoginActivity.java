@@ -5,28 +5,27 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import backend.Const;
 import backend.Controller;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.INTERNET;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AbstractActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initController();
         super.onCreate(savedInstanceState);
+        getController().getAccountInfo(this);
         setContentView(R.layout.login_activity);
         configureUI();
     }
@@ -48,9 +47,31 @@ public class LoginActivity extends AbstractActivity {
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
 
         } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{READ_CONTACTS}, Const.REQUEST_READ_CONTACTS);
         }
         return false;
+    }
+
+    private boolean mayRequestPermissions(int requestCode) {
+        boolean result = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return false;
+        }
+        if (checkSelfPermission(INTERNET) == PackageManager.PERMISSION_DENIED) {
+            result = true;
+        }
+        return result;
+    }
+
+    private void requestPermission(int requestCode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { return; }
+        switch (requestCode) {
+            case Const.REQUEST_INTERNET:
+                ActivityCompat.requestPermissions(this, new String[]{INTERNET}, Const.REQUEST_INTERNET);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -59,10 +80,17 @@ public class LoginActivity extends AbstractActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //populateAutoComplete();
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { return; }
+        switch (requestCode) {
+            case Const.REQUEST_INTERNET:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    requestPermission(Const.REQUEST_INTERNET);
+                }
+                break;
+            default:
+                break;
         }
     }
 
