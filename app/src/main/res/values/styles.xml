@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Title Style-->
+    <style name="titleStyle">
+        <item name="android:textSize">24pt</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

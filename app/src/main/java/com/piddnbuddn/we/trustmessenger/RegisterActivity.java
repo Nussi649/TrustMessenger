@@ -15,6 +15,12 @@ import backend.PublicKey;
 
 public class RegisterActivity extends AbstractActivity {
 
+    private static final int GENERATE_KEY = 1;
+    private static final int SEND_TO_SERVER = 2;
+
+    private PrivateKey newPrivKey;
+    private PublicKey newPubKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,12 +30,30 @@ public class RegisterActivity extends AbstractActivity {
 
     @Override
     protected void doWork(final int workID) {
-
+        switch (workID) {
+            case GENERATE_KEY:
+                newPrivKey = PrivateKey.generateRandomKey();
+                newPubKey = PublicKey.calculateFromPrivateKey(newPrivKey);
+                break;
+            case SEND_TO_SERVER:
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
     protected void afterWorkFinish(final int workID) {
-
+        switch (workID) {
+            case GENERATE_KEY:
+                startThreadWithFinish(SEND_TO_SERVER);
+                break;
+            case SEND_TO_SERVER:
+                startActivity(OverviewActivity.class);
+                break;
+            default:
+                break;
+        }
     }
 
     private void configureButtons() {
@@ -50,7 +74,7 @@ public class RegisterActivity extends AbstractActivity {
             PrivateKey newPrivKey = PrivateKey.generateRandomKey();
             PublicKey newPubKey = PublicKey.calculateFromPrivateKey(newPrivKey);
             String signedName = newPrivKey.sign(name);
-            startThreadWithFinish(Const.DO_REGISTER_CODE);
+            startThreadWithFinish(GENERATE_KEY);
         }
     }
 }
