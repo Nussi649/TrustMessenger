@@ -37,7 +37,7 @@ public class LoginActivity extends AbstractActivity {
         Controller.createInstance();
         controller = Controller.instance;
         model = controller.getModel();
-//        model.username = "Karl";
+        model.username = "Karl";
     }
 
     private boolean mayRequestPermissions() {

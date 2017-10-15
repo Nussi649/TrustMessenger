@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -69,12 +70,14 @@ public abstract class AbstractActivity extends Activity {
                 doWork(workID);
             }
         });
+        thread.start();
     }
 
     private void startWorkingThread() {
         Thread workingThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 ProgressDialog progress = getWaitDialog();
                 progress.show();
                 workingThread();
@@ -82,6 +85,7 @@ public abstract class AbstractActivity extends Activity {
                 progress.dismiss();
             }
         });
+        workingThread.start();
     }
 
     protected void workingThread() {
