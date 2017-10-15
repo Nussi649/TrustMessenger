@@ -24,4 +24,7 @@
     <!-- Strings related to Loadingscreen -->
     <string name="loadingscreen_title">Loading</string>
     <string name="loadingscreen_body">Please Wait...</string>
+    <!-- Strings related to Overview -->
+    <string name="chat_segment_title_default">{User} - 10 min ago</string>
+    <string name="chat_segment_body_default">Haha thats funny</string>
 </resources>

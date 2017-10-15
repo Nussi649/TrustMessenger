@@ -3,8 +3,10 @@ package com.piddnbuddn.we.trustmessenger;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import backend.ChatSegment;
 import backend.be.ChatBE;
 
 /**
@@ -29,15 +31,26 @@ public class OverviewActivity extends AbstractActivity {
 
     @Override
     protected void endWorkingThread() {
-        populateUI();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                populateUI();
+            }
+        });
     }
 
     private void getData() {
-
+        List<ChatBE> chatList = new ArrayList<>();
+        chatList.add(new ChatBE("tom"));
+        chatList.add(new ChatBE("shayla"));
+        chatList.add(new ChatBE("jeff"));
+        chats = chatList;
     }
 
     private void populateUI() {
         mainContainer = (LinearLayout)findViewById(R.id.mainContent);
-
+        for (ChatBE chat : chats) {
+            mainContainer.addView(new ChatSegment(this, chat));
+        }
     }
 }
