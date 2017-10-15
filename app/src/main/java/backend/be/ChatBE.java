@@ -5,6 +5,17 @@ package backend.be;
  */
 
 public class ChatBE {
-    ContactBE partner;
-    String name;
+    public ContactBE partner;
+    public String name;
+
+    public ChatBE() {}
+
+    public ChatBE(String name) {
+        this.name = name;
+    }
+
+    public ChatBE(ContactBE partner) {
+        this.partner = partner;
+        this.name = partner.name;
+    }
 }
