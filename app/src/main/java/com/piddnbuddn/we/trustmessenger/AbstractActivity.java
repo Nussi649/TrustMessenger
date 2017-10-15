@@ -3,6 +3,7 @@ package com.piddnbuddn.we.trustmessenger;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,13 +25,17 @@ public abstract class AbstractActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (model == null) {
+            model = getModel();
+        }
+        startWorkingThread();
         if (getController().checkPasswordUsage()) {
             showSetPasswordDialog();
         }
     }
 
     public Model getModel() {
-        return model;
+        return controller.getModel();
     }
 
     public Controller getController() {
@@ -54,6 +59,7 @@ public abstract class AbstractActivity extends Activity {
                 afterWorkFinish(workID);
             }
         });
+        thread.start();
     }
 
     protected void startThreadWithoutFinish(final int workID) {
@@ -63,6 +69,27 @@ public abstract class AbstractActivity extends Activity {
                 doWork(workID);
             }
         });
+    }
+
+    private void startWorkingThread() {
+        Thread workingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressDialog progress = getWaitDialog();
+                progress.show();
+                workingThread();
+                endWorkingThread();
+                progress.dismiss();
+            }
+        });
+    }
+
+    protected void workingThread() {
+
+    }
+
+    protected void endWorkingThread() {
+
     }
 
     protected void startActivity(Class<? extends AbstractActivity> target) {
@@ -163,7 +190,12 @@ public abstract class AbstractActivity extends Activity {
     }
 
     private void setPassword(String newPW) {
-        getController().setPassword(newPW, this);
+        if (getController().setPassword(newPW, this)) {
+            showToastLong(R.string.toast_password_set_success);
+        } else {
+            showToastLong(R.string.toast_password_set_fail);
+        }
+
     }
 
 
@@ -174,6 +206,14 @@ public abstract class AbstractActivity extends Activity {
                 dialog.dismiss();
             }
         };
+        return re;
+    }
+
+    private ProgressDialog getWaitDialog() {
+        ProgressDialog re = new ProgressDialog(this);
+        re.setTitle(R.string.loadingscreen_title);
+        re.setMessage(getString(R.string.loadingscreen_body));
+        re.setCancelable(false);
         return re;
     }
 }

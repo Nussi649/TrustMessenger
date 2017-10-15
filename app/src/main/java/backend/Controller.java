@@ -55,21 +55,24 @@ public class Controller {
         return false;
     }
 
-    public void setPassword(String newPassword, Context context) {
+    public boolean setPassword(String newPassword, Context context) {
         model.password = sha256(newPassword);
-        writeInternal(context, Const.FILENAME_PASSWORD, newPassword);
+        return writeInternal(context, Const.FILENAME_PASSWORD, newPassword);
     }
 
-    public void writeInternal(Context context, String file, String content) {
+    public boolean writeInternal(Context context, String file, String content) {
         try {
             FileOutputStream fos = context.openFileOutput(file, Context.MODE_PRIVATE);
             fos.write(content.getBytes());
             fos.close();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
+            return false;
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public String readInternal(Context context, String file) {
