@@ -4,6 +4,7 @@
     <string name="welcome">Hello, </string>
     <string name="welcome_default">You have no Private Key</string>
     <string name="delete_key">Delete Key</string>
+    <string name="login_button">Login</string>
     <!-- Strings related to register -->
     <string name="action_register">Create Private Key</string>
     <string name="prompt_register_name">Choose Username</string>
@@ -15,6 +16,12 @@
     <string name="dialog_approve">Yes</string>
     <string name="dialog_decline">No</string>
     <string name="dialog_cancel">Cancel</string>
+    <!-- Strings related to Password Selection -->
+    <string name="toast_password_set_success">Password was set successfully</string>
+    <string name="toast_password_set_fail">An error occurred while setting the password</string>
     <string name="dialog_title_password">Set Password</string>
     <string name="dialog_message_password">Do you want to set a password?\nIt will only be used to secure the app on your device.</string>
+    <!-- Strings related to Loadingscreen -->
+    <string name="loadingscreen_title">Loading</string>
+    <string name="loadingscreen_body">Please Wait...</string>
 </resources>

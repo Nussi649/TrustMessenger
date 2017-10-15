@@ -17,6 +17,7 @@ public class RegisterActivity extends AbstractActivity {
 
     private static final int GENERATE_KEY = 1;
     private static final int SEND_TO_SERVER = 2;
+    private static final int TEST = 3;
 
     private PrivateKey newPrivKey;
     private PublicKey newPubKey;
@@ -41,6 +42,9 @@ public class RegisterActivity extends AbstractActivity {
             case SEND_TO_SERVER:
                 sendToServer(newPubKey, signedUsername);
                 break;
+            case TEST:
+                getModel().username = username;
+                break;
             default:
                 break;
         }
@@ -57,6 +61,9 @@ public class RegisterActivity extends AbstractActivity {
                 getModel().privateKey = newPrivKey;
                 getModel().publicKey = newPubKey;
                 startActivity(OverviewActivity.class);
+                break;
+            case TEST:
+                startActivity(LoginActivity.class);
                 break;
             default:
                 break;
@@ -83,7 +90,7 @@ public class RegisterActivity extends AbstractActivity {
             showToast(R.string.error_name_empty);
         } else {
             username = name;
-            startThreadWithFinish(GENERATE_KEY);
+            startThreadWithFinish(TEST);
         }
     }
 }

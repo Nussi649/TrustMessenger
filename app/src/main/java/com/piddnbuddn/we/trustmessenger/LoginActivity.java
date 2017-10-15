@@ -23,9 +23,12 @@ public class LoginActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        initController();
-        super.onCreate(savedInstanceState);
+        if (controller == null) {
+            initController();
+        }
         getController().getAccountInfo(this);
+        mayRequestPermissions();
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         configureUI();
     }
@@ -34,25 +37,10 @@ public class LoginActivity extends AbstractActivity {
         Controller.createInstance();
         controller = Controller.instance;
         model = controller.getModel();
-        model.username = "Karl";
+//        model.username = "Karl";
     }
 
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, Const.REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    private boolean mayRequestPermissions(int requestCode) {
+    private boolean mayRequestPermissions() {
         boolean result = false;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return false;
@@ -96,28 +84,35 @@ public class LoginActivity extends AbstractActivity {
 
     private void configureUI() {
         Button delete = (Button) findViewById(R.id.login_button_delete);
+        Button create = (Button) findViewById(R.id.login_button_create);
         if (model.username != null) {
             if (model.username != "") {
                 TextView welcome = (TextView) findViewById(R.id.login_textview_welcome);
                 welcome.setText(getString(R.string.welcome) + model.username);
                 delete.setVisibility(View.VISIBLE);
+                create.setText(getString(R.string.login_button));
+                create.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(OverviewActivity.class);
+                    }
+                });
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
             }
         } else {
             delete.setVisibility(View.GONE);
+            create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(RegisterActivity.class);
+                }
+            });
         }
-        Button create = (Button) findViewById(R.id.login_button_create);
-        create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(RegisterActivity.class);
-            }
-        });
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 }
 
