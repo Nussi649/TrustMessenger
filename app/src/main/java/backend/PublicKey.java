@@ -1,5 +1,6 @@
 package backend;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -8,14 +9,9 @@ import java.util.Random;
 
 public class PublicKey extends Key {
 
-    public PublicKey(long key) {
+    public PublicKey(BigInteger key, BigInteger modul) {
         value = key;
-    }
-
-    public static PublicKey calculateFromPrivateKey(PrivateKey privKey) {
-        PublicKey re = new PublicKey(10);
-        // TODO: implement logic
-        return re;
+        this.modul = modul;
     }
 
     public String encrypt(String message) {

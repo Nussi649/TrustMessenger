@@ -9,15 +9,30 @@ import java.util.Random;
 
 public class PrivateKey extends Key {
 
-    public PrivateKey(BigInteger key) {
+    public PublicKey publicKey;
+
+    public PrivateKey(BigInteger key, BigInteger modul) {
         value = key;
+        this.modul = modul;
     }
+
     public static PrivateKey generateRandomKey() {
         Random random = new Random();
-        // TODO: generate random key
+        // generate needed numbers
         BigInteger factor1 = BigInteger.probablePrime(512, random);
         BigInteger factor2 = BigInteger.probablePrime(512, random);
-        return new PrivateKey(factor1.multiply(factor2));
+        BigInteger modulN = factor1.multiply(factor2);
+        BigInteger phiN = factor1.subtract(BigInteger.ONE).multiply(factor2.subtract(BigInteger.ONE));
+        BigInteger e;
+        do {
+            e = new BigInteger(512, random);
+        } while (phiN.subtract(e).signum() == 1 && phiN.remainder(e) != BigInteger.ZERO);
+        BigInteger d = e.modInverse(phiN);
+
+        // instantiate keys
+        PrivateKey re = new PrivateKey(e,modulN);
+        re.setPublicKey(new PublicKey(d, modulN));
+        return re;
     }
 
     public String decrypt(String message) {
@@ -27,5 +42,9 @@ public class PrivateKey extends Key {
 
     public String sign(String message) {
         return decrypt(message);
+    }
+
+    public void setPublicKey(PublicKey pubKey) {
+        this.publicKey = pubKey;
     }
 }
