@@ -1,5 +1,6 @@
 package Util;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -26,5 +27,15 @@ public class Util {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static BigInteger stringToBigInt(String s) {
+        byte[] bytes = s.getBytes();
+        return new BigInteger(bytes);
+    }
+
+    public static String bigIntToString(BigInteger b) {
+        byte[] bytes = b.toByteArray();
+        return new String(bytes);
     }
 }

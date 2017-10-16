@@ -3,6 +3,8 @@ package backend;
 import java.math.BigInteger;
 import java.util.Random;
 
+import Util.Util;
+
 /**
  * Created by ich on 10.10.2017.
  */
@@ -15,7 +17,8 @@ public class PublicKey extends Key {
     }
 
     public String encrypt(String message) {
-        // TODO: implement logic (RSA)
-        return "";
+        BigInteger mes = Util.stringToBigInt(message);
+        BigInteger mesEnc = mes.modPow(getValue(), getModul());
+        return Util.bigIntToString(mesEnc);
     }
 }

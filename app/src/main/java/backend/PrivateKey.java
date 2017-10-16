@@ -3,6 +3,10 @@ package backend;
 import java.math.BigInteger;
 import java.util.Random;
 
+import Util.Util;
+
+import static Util.Util.stringToBigInt;
+
 /**
  * Created by ich on 10.10.2017.
  */
@@ -36,8 +40,9 @@ public class PrivateKey extends Key {
     }
 
     public String decrypt(String message) {
-        // TODO: implement logic (RSA)
-        return "";
+        BigInteger mes = Util.stringToBigInt(message);
+        BigInteger mesDec = mes.modPow(getValue(), getModul());
+        return Util.bigIntToString(mesDec);
     }
 
     public String sign(String message) {
