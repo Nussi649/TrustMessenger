@@ -1,5 +1,6 @@
 package backend;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -8,14 +9,15 @@ import java.util.Random;
 
 public class PrivateKey extends Key {
 
-    public PrivateKey(long key) {
+    public PrivateKey(BigInteger key) {
         value = key;
     }
     public static PrivateKey generateRandomKey() {
         Random random = new Random();
         // TODO: generate random key
-        long newKey = random.nextLong();
-        return new PrivateKey(newKey);
+        BigInteger factor1 = BigInteger.probablePrime(512, random);
+        BigInteger factor2 = BigInteger.probablePrime(512, random);
+        return new PrivateKey(factor1.multiply(factor2));
     }
 
     public String decrypt(String message) {
