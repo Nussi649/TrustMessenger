@@ -40,6 +40,6 @@ public class ConversationActivity extends AbstractActivity {
     }
 
     private void populateUI() {
-
+        setContentView(R.layout.activity_conversation);
     }
 }

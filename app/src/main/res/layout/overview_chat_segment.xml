@@ -7,7 +7,7 @@
         android:id="@+id/chatPortrait"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/colorPrimary"/>
     <LinearLayout
         android:id="@+id/chatContent"
         android:layout_width="match_parent"

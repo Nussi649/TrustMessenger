@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,7 +24,7 @@ import backend.Controller;
  * Created by ich on 07.10.2017.
  */
 
-public abstract class AbstractActivity extends Activity {
+public abstract class AbstractActivity extends AppCompatActivity {
     Controller controller = Controller.instance;
     Model model;
     ActionBarDrawerToggle drawerToggle = null;
@@ -197,11 +200,15 @@ public abstract class AbstractActivity extends Activity {
             drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_open, R.string.navigation_close) {
                 @Override
                 public void onDrawerClosed(final View view) {
+                    super.onDrawerClosed(view);
+                    drawerLayout.closeDrawer(Gravity.LEFT);
                     invalidateOptionsMenu();
                 }
 
                 @Override
                 public void onDrawerOpened(final View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    drawerLayout.openDrawer(Gravity.LEFT);
                     invalidateOptionsMenu();
                 }
             };
@@ -244,6 +251,18 @@ public abstract class AbstractActivity extends Activity {
             }
         };
         return re;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
     }
 
     private ProgressDialog getWaitDialog() {
