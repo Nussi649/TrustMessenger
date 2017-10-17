@@ -9,4 +9,31 @@ import backend.PublicKey;
 public class ContactBE {
     String name;
     PublicKey publicKey;
+
+    public ContactBE() { }
+
+    public ContactBE(String name) {
+        this.name = name;
+    }
+
+    public ContactBE(String name, PublicKey pubKey) {
+        this.name = name;
+        this.publicKey = pubKey;
+    }
+
+    public void setPublicKey(PublicKey newPubKey) {
+        publicKey = newPubKey;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
