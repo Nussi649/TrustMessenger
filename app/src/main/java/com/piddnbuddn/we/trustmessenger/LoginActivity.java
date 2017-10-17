@@ -1,6 +1,5 @@
 package com.piddnbuddn.we.trustmessenger;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import backend.Const;
 import backend.Controller;
 
-import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.INTERNET;
 
 /**
@@ -29,7 +27,7 @@ public class LoginActivity extends AbstractActivity {
         getController().getAccountInfo(this);
         mayRequestPermissions();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.activity_login);
         configureUI();
     }
 

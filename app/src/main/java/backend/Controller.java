@@ -116,4 +116,8 @@ public class Controller {
     public void setCurChat(ChatBE chat){
         model.curChat = chat;
     }
+
+    public void setCurContact(ContactBE contact) {
+        model.curContact = contact;
+    }
 }

@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import backend.Const;
 import backend.PrivateKey;
 import backend.PublicKey;
 
@@ -27,7 +26,7 @@ public class RegisterActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_activity);
+        setContentView(R.layout.activity_register);
         configureButtons();
     }
 

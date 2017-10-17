@@ -22,7 +22,7 @@ public class OverviewActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.overview_activity);
+        setContentView(R.layout.activity_overview);
     }
 
     @Override
@@ -32,12 +32,7 @@ public class OverviewActivity extends AbstractActivity {
 
     @Override
     protected void endWorkingThread() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                populateUI();
-            }
-        });
+        populateUI();
     }
 
     private void getData() {
@@ -50,7 +45,7 @@ public class OverviewActivity extends AbstractActivity {
     }
 
     private void populateUI() {
-        mainContainer = (LinearLayout)findViewById(R.id.mainContent);
+        mainContainer = (LinearLayout)findViewById(R.id.main_content);
         for (ChatBE chat : chats) {
             final ChatBE finalChat = chat;
             ChatSegment chatSegment = new ChatSegment(this, finalChat);

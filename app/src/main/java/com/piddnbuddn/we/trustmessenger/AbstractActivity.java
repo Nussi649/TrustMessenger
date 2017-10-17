@@ -2,7 +2,6 @@ package com.piddnbuddn.we.trustmessenger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -86,7 +85,12 @@ public abstract class AbstractActivity extends Activity {
                 ProgressDialog progress = getWaitDialog();
                 progress.show();
                 workingThread();
-                endWorkingThread();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        endWorkingThread();
+                    }
+                });
                 progress.dismiss();
             }
         });
@@ -97,6 +101,7 @@ public abstract class AbstractActivity extends Activity {
 
     }
 
+    // Runs on UI-Thread
     protected void endWorkingThread() {
 
     }
@@ -218,7 +223,7 @@ public abstract class AbstractActivity extends Activity {
                 dialog.dismiss();
             }
         };
-        showCustomDialog(getString(R.string.dialog_title_password), getString(R.string.dialog_message_password), R.layout.set_password_dialog, accept, getDoNothingClickListener());
+        showCustomDialog(getString(R.string.dialog_title_password), getString(R.string.dialog_message_password), R.layout.dialog_set_password, accept, getDoNothingClickListener());
     }
 
     private void setPassword(String newPW) {

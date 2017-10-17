@@ -20,4 +20,5 @@ public class Model {
     public List<ChatBE> chats;
 
     public ChatBE curChat;
+    public ContactBE curContact;
 }
