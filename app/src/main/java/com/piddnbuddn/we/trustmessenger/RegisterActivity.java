@@ -36,7 +36,7 @@ public class RegisterActivity extends AbstractActivity {
         switch (workID) {
             case GENERATE_KEY:
                 newPrivKey = PrivateKey.generateRandomKey();
-                newPubKey = PublicKey.calculateFromPrivateKey(newPrivKey);
+                newPubKey = newPrivKey.publicKey;
                 signedUsername = newPrivKey.sign(username);
                 break;
             case SEND_TO_SERVER:

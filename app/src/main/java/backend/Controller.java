@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import backend.be.ChatBE;
+import backend.be.ContactBE;
 
 import static Util.Util.sha256;
 
@@ -75,6 +79,14 @@ public class Controller {
         return true;
     }
 
+    public void loadContactList() {
+        model.contacts = new ArrayList<>();
+        model.contacts.add(new ContactBE("terry"));
+        model.contacts.add(new ContactBE("john"));
+        model.contacts.add(new ContactBE("lara"));
+        model.contacts.add(new ContactBE("stacey"));
+    }
+
     public String readInternal(Context context, String file) {
         try {
             FileInputStream fis = context.openFileInput(file);
@@ -99,5 +111,9 @@ public class Controller {
             ioe.printStackTrace();
         }
         return "";
+    }
+
+    public void setCurChat(ChatBE chat){
+        model.curChat = chat;
     }
 }
