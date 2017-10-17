@@ -9,6 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ import backend.Controller;
 public abstract class AbstractActivity extends Activity {
     Controller controller = Controller.instance;
     Model model;
+    ActionBarDrawerToggle drawerToggle = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public abstract class AbstractActivity extends Activity {
             model = getModel();
         }
         startWorkingThread();
+        buildDrawer();
         if (getController().checkPasswordUsage()) {
             showSetPasswordDialog();
         }
@@ -180,6 +185,29 @@ public abstract class AbstractActivity extends Activity {
         builder.create().show();
     }
     //endregion
+
+    private void buildDrawer() {
+        final DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        if (drawerLayout != null) {
+            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_open, R.string.navigation_close) {
+                @Override
+                public void onDrawerClosed(final View view) {
+                    invalidateOptionsMenu();
+                }
+
+                @Override
+                public void onDrawerOpened(final View drawerView) {
+                    invalidateOptionsMenu();
+                }
+            };
+            drawerLayout.setDrawerListener(drawerToggle);
+
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setHomeButtonEnabled(true);
+
+            // set Click Listeners
+        }
+    }
 
     protected void showSetPasswordDialog() {
         DialogInterface.OnClickListener accept = new DialogInterface.OnClickListener() {
