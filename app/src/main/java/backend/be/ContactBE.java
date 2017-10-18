@@ -7,6 +7,8 @@ import backend.PublicKey;
  */
 
 public class ContactBE {
+
+    int id;
     String name;
     PublicKey publicKey;
 
@@ -19,6 +21,12 @@ public class ContactBE {
     public ContactBE(String name, PublicKey pubKey) {
         this.name = name;
         this.publicKey = pubKey;
+    }
+
+    public ContactBE(String name, PublicKey pubKey, int id) {
+        this.name = name;
+        this.publicKey = pubKey;
+        this.id = id;
     }
 
     public void setPublicKey(PublicKey newPubKey) {

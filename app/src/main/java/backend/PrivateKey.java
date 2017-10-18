@@ -27,11 +27,18 @@ public class PrivateKey extends Key {
         BigInteger factor2 = BigInteger.probablePrime(Const.KEY_BIT_LENGTH, random);
         BigInteger modulN = factor1.multiply(factor2);
         BigInteger phiN = factor1.subtract(BigInteger.ONE).multiply(factor2.subtract(BigInteger.ONE));
-        BigInteger e;
+        BigInteger e = new BigInteger(Const.KEY_BIT_LENGTH, random);
+        BigInteger d = BigInteger.ONE;
+        boolean arithEx;
         do {
-            e = new BigInteger(Const.KEY_BIT_LENGTH, random);
-        } while (phiN.subtract(e).signum() == 1 && phiN.remainder(e) != BigInteger.ZERO);
-        BigInteger d = e.modInverse(phiN);
+            try {
+                arithEx = false;
+                e = new BigInteger(Const.KEY_BIT_LENGTH, random);
+                d = e.modInverse(phiN);
+            } catch (ArithmeticException ae) {
+                arithEx = true;
+            }
+        } while (e.subtract(phiN).signum() == 1 || e.equals(factor1.subtract(BigInteger.ONE)) || e.equals(factor2.subtract(BigInteger.ONE)) || arithEx);
 
         // instantiate keys
         PrivateKey re = new PrivateKey(e,modulN);

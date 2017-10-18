@@ -272,7 +272,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private ProgressDialog getWaitDialog() {
+    protected ProgressDialog getWaitDialog() {
         ProgressDialog re = new ProgressDialog(this);
         re.setTitle(R.string.loadingscreen_title);
         re.setMessage(getString(R.string.loadingscreen_body));

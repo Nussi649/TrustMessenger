@@ -1,5 +1,6 @@
 package com.piddnbuddn.we.trustmessenger;
 
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import Util.FeedReaderDbHelper;
 import backend.Const;
 import backend.Controller;
 
@@ -38,10 +40,16 @@ public class LoginActivity extends AbstractActivity {
         if (controller != null) {
             return;
         }
+        ProgressDialog dialog = getWaitDialog();
+        dialog.show();
         initController();
         getController().getAccountInfo(this);
         mayRequestPermissions();
         controller.setResources(getResources());
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this);
+        dbHelper.openDataBase();
+        controller.setDb(dbHelper.db);
+        dialog.dismiss();
     }
 
     private boolean mayRequestPermissions() {
