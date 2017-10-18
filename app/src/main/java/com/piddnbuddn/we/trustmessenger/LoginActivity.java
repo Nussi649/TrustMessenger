@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,11 +22,7 @@ public class LoginActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (controller == null) {
-            initController();
-        }
-        getController().getAccountInfo(this);
-        mayRequestPermissions();
+        onAppStartup();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         configureUI();
@@ -35,7 +32,16 @@ public class LoginActivity extends AbstractActivity {
         Controller.createInstance();
         controller = Controller.instance;
         model = controller.getModel();
-        model.username = "Karl";
+    }
+
+    private void onAppStartup() {
+        if (controller != null) {
+            return;
+        }
+        initController();
+        getController().getAccountInfo(this);
+        mayRequestPermissions();
+        controller.setResources(getResources());
     }
 
     private boolean mayRequestPermissions() {
@@ -81,12 +87,13 @@ public class LoginActivity extends AbstractActivity {
     }
 
     private void configureUI() {
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         Button delete = (Button) findViewById(R.id.login_button_delete);
         Button create = (Button) findViewById(R.id.login_button_create);
         if (model.username != null) {
             if (model.username != "") {
                 TextView welcome = (TextView) findViewById(R.id.login_textview_welcome);
-                welcome.setText(getString(R.string.welcome) + model.username);
+                welcome.setText(getString(R.string.welcome) + " " + model.username);
                 delete.setVisibility(View.VISIBLE);
                 create.setText(getString(R.string.login_button));
                 create.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +105,7 @@ public class LoginActivity extends AbstractActivity {
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        deleteUsername();
                     }
                 });
             }
@@ -111,6 +118,12 @@ public class LoginActivity extends AbstractActivity {
                 }
             });
         }
+    }
+
+    private void deleteUsername() {
+        getController().deleteInternal(this, Const.FILENAME_USERNAME);
+        getModel().username = null;
+        startActivity(LoginActivity.class);
     }
 }
 

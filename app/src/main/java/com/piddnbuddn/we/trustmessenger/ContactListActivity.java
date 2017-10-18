@@ -1,6 +1,7 @@
 package com.piddnbuddn.we.trustmessenger;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +40,9 @@ public class ContactListActivity extends AbstractActivity {
 
     private void populateUI() {
         setContentView(R.layout.activity_contact_list);
+        setTitle(R.string.activity_contact_list);
+        setSupportActionBar((Toolbar)findViewById(R.id.drawer_layout).findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout mainContent = (LinearLayout)findViewById(R.id.main_content);
         for (ContactBE contact : contacts) {
             final ContactBE finalContact = contact;
@@ -52,5 +56,6 @@ public class ContactListActivity extends AbstractActivity {
             });
             mainContent.addView(segment);
         }
+        buildDrawer();
     }
 }

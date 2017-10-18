@@ -1,6 +1,8 @@
 package com.piddnbuddn.we.trustmessenger;
 
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -36,16 +38,15 @@ public class OverviewActivity extends AbstractActivity {
     }
 
     private void getData() {
-        List<ChatBE> chatList = new ArrayList<>();
-        chatList.add(new ChatBE("tom"));
-        chatList.add(new ChatBE("shayla"));
-        chatList.add(new ChatBE("jeff"));
-        chats = chatList;
         controller.loadContactList();
+        controller.loadChatList();
+        chats = model.chats;
     }
 
     private void populateUI() {
         mainContainer = (LinearLayout)findViewById(R.id.main_content);
+        setTitle(R.string.activity_overview);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         for (ChatBE chat : chats) {
             final ChatBE finalChat = chat;
             ChatSegment chatSegment = new ChatSegment(this, finalChat);
@@ -58,5 +59,6 @@ public class OverviewActivity extends AbstractActivity {
             });
             mainContainer.addView(chatSegment);
         }
+        buildDrawer();
     }
 }

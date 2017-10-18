@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import backend.Model;
@@ -36,7 +37,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
             model = getModel();
         }
         startWorkingThread();
-        buildDrawer();
         if (getController().checkPasswordUsage()) {
             showSetPasswordDialog();
         }
@@ -194,7 +194,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
     }
     //endregion
 
-    private void buildDrawer() {
+    protected void buildDrawer() {
         final DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         if (drawerLayout != null) {
             drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_open, R.string.navigation_close) {
@@ -214,10 +214,24 @@ public abstract class AbstractActivity extends AppCompatActivity {
             };
             drawerLayout.setDrawerListener(drawerToggle);
 
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeButtonEnabled(true);
-
             // set Click Listeners
+            TextView newConversation = (TextView)findViewById(R.id.navigation_new_conversation);
+            TextView newGroup = (TextView)findViewById(R.id.navigation_new_group);
+            TextView contactList = (TextView)findViewById(R.id.navigation_contact_list);
+            TextView settings = (TextView)findViewById(R.id.navigation_settings);
+
+            contactList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(ContactListActivity.class);
+                }
+            });
+            settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(SettingsActivity.class);
+                }
+            });
         }
     }
 
@@ -255,13 +269,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle your other action bar items...
-
         return super.onOptionsItemSelected(item);
     }
 

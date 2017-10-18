@@ -1,7 +1,11 @@
 package backend;
 
 import android.content.Context;
+import android.content.res.Resources;
 
+import com.piddnbuddn.we.trustmessenger.R;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -59,9 +63,33 @@ public class Controller {
         return false;
     }
 
+    public void setResources(Resources res) {
+        model.resources = res;
+    }
+
+    public String getString(int ResID) {
+        return model.resources.getString(ResID);
+    }
+
     public boolean setPassword(String newPassword, Context context) {
         model.password = sha256(newPassword);
         return writeInternal(context, Const.FILENAME_PASSWORD, newPassword);
+    }
+
+    public void loadContactList() {
+        model.contacts = new ArrayList<>();
+        model.contacts.add(new ContactBE(getString(R.string.buddy_1)));
+        model.contacts.add(new ContactBE(getString(R.string.buddy_2)));
+        model.contacts.add(new ContactBE(getString(R.string.buddy_3)));
+        model.contacts.add(new ContactBE(getString(R.string.buddy_4)));
+    }
+
+    public void loadChatList() {
+        model.chats = new ArrayList<>();
+        model.chats.add(new ChatBE(model.contacts.get(0)));
+        model.chats.add(new ChatBE(model.contacts.get(1)));
+        model.chats.add(new ChatBE(model.contacts.get(2)));
+        model.chats.add(new ChatBE(model.contacts.get(3)));
     }
 
     public boolean writeInternal(Context context, String file, String content) {
@@ -79,12 +107,9 @@ public class Controller {
         return true;
     }
 
-    public void loadContactList() {
-        model.contacts = new ArrayList<>();
-        model.contacts.add(new ContactBE("terry"));
-        model.contacts.add(new ContactBE("john"));
-        model.contacts.add(new ContactBE("lara"));
-        model.contacts.add(new ContactBE("stacey"));
+    public boolean deleteInternal(Context context, String file) {
+        File dir = context.getFilesDir();
+        return new File(dir, file).delete();
     }
 
     public String readInternal(Context context, String file) {

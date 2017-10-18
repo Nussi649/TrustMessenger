@@ -1,10 +1,12 @@
 package com.piddnbuddn.we.trustmessenger;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import backend.Const;
 import backend.PrivateKey;
 import backend.PublicKey;
 
@@ -27,6 +29,9 @@ public class RegisterActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        setTitle(R.string.activity_register);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         configureButtons();
     }
 
@@ -62,6 +67,7 @@ public class RegisterActivity extends AbstractActivity {
                 startActivity(OverviewActivity.class);
                 break;
             case TEST:
+                getController().writeInternal(this, Const.FILENAME_USERNAME, username);
                 startActivity(LoginActivity.class);
                 break;
             default:
@@ -71,12 +77,15 @@ public class RegisterActivity extends AbstractActivity {
 
     private void configureButtons() {
         Button acceptButton = (Button) findViewById(R.id.register_button);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 doRegister();
             }
         });
+        buildDrawer();
     }
 
     private void sendToServer(PublicKey publicKey, String signedName) {
