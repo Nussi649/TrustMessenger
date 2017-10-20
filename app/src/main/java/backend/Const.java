@@ -19,4 +19,7 @@ public class Const {
 
     // KEY LENGTH
     public static final int KEY_BIT_LENGTH = 512;
+
+    // CHATS
+    public static final int DEFAULT_DESTRUCTION_TIMER = 60 * 60 * 24;
 }

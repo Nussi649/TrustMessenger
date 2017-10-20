@@ -47,17 +47,19 @@ public class OverviewActivity extends AbstractActivity {
         mainContainer = (LinearLayout)findViewById(R.id.main_content);
         setTitle(R.string.activity_overview);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
-        for (ChatBE chat : chats) {
-            final ChatBE finalChat = chat;
-            ChatSegment chatSegment = new ChatSegment(this, finalChat);
-            chatSegment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getController().setCurChat(finalChat);
-                    startActivity(ConversationActivity.class);
-                }
-            });
-            mainContainer.addView(chatSegment);
+        if (chats != null) {
+            for (ChatBE chat : chats) {
+                final ChatBE finalChat = chat;
+                ChatSegment chatSegment = new ChatSegment(this, finalChat);
+                chatSegment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getController().setCurChat(finalChat);
+                        startActivity(ConversationActivity.class);
+                    }
+                });
+                mainContainer.addView(chatSegment);
+            }
         }
         buildDrawer();
     }

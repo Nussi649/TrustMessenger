@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.List;
 
 import Util.Util;
 import Util.FeedReaderContract;
@@ -25,6 +26,7 @@ import Util.FeedReaderDbHelper;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 import backend.be.CursorToBETransform;
+import backend.be.MessageBE;
 
 import static Util.Util.sha256;
 
@@ -143,9 +145,13 @@ public class Controller {
     // region Database
     public void setDb(SQLiteDatabase database) {
         db = database;
+        resetDatabase();
         if (DatabaseUtils.queryNumEntries(db, "sequences") == 0) {
             initiateSequenceValues();
             setContacts();
+            loadContactsFromDB();
+            setChats();
+            loadChatsFromDB();
         }
     }
 
@@ -154,6 +160,7 @@ public class Controller {
         db.beginTransaction();
         String sql1 = "INSERT INTO sequences(seq_val,tablen) VALUES (0,'contacts')";
         String sql2 = "INSERT INTO sequences(seq_val,tablen) VALUES (0,'messages')";
+        String sql3 = "INSERT INTO sequences(seq_val,tablen) VALUES (0,'chats')";
         try {
             db.execSQL(sql1);
         } catch (SQLException sqle) {
@@ -162,6 +169,12 @@ public class Controller {
         }
         try {
             db.execSQL(sql2);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        try {
+            db.execSQL(sql3);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
             result = false;
@@ -202,6 +215,28 @@ public class Controller {
         db.endTransaction();
     }
 
+    public void loadChatsFromDB() {
+        String sql = "SELECT * FROM chats";
+        db.beginTransaction();
+        Cursor cursor = db.rawQuery(sql, null);
+        model.chats = CursorToBETransform.transformToChatList(cursor, this);
+        if (model.chats != null) {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+    }
+
+    private void resetDatabase() {
+        db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_DELETE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_DELETE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_DELETE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryChats.SQL_DELETE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_CREATE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_CREATE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_CREATE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryChats.SQL_CREATE_ENTRIES);
+    }
+
     private void cheat() {
         String sql2 = "SELECT * FROM sequences";
         Cursor cursor = db.rawQuery(sql2, null);
@@ -218,35 +253,116 @@ public class Controller {
         ContactBE stacey = new ContactBE(getString(R.string.buddy_4), PrivateKey.generateRandomKey().publicKey);
 
         db.beginTransaction();
-        ContentValues values = new ContentValues();
-        values.put("id",getSequenceValue("contacts"));
-        values.put("name", terry.getName());
-        values.put("pub_key", Util.bigIntToString(terry.getPublicKey().getValue()));
-        values.put("modul", Util.bigIntToString(terry.getPublicKey().getModul()));
-        result &= (db.insert("contacts", null, values) != -1);
-        values = new ContentValues();
-        values.put("id",getSequenceValue("contacts"));
-        values.put("name", john.getName());
-        values.put("pub_key", Util.bigIntToString(john.getPublicKey().getValue()));
-        values.put("modul", Util.bigIntToString(john.getPublicKey().getModul()));
-        result &= (db.insert("contacts", null, values) != -1);
-        values = new ContentValues();
-        values.put("id",getSequenceValue("contacts"));
-        values.put("name", lara.getName());
-        values.put("pub_key", Util.bigIntToString(lara.getPublicKey().getValue()));
-        values.put("modul", Util.bigIntToString(lara.getPublicKey().getModul()));
-        result &= (db.insert("contacts", null, values) != -1);
-        values = new ContentValues();
-        values.put("id",getSequenceValue("contacts"));
-        values.put("name", stacey.getName());
-        values.put("pub_key", Util.bigIntToString(stacey.getPublicKey().getValue()));
-        values.put("modul", Util.bigIntToString(stacey.getPublicKey().getModul()));
-        result &= (db.insert("contacts", null, values) != -1);
+        String value = Util.bigIntToString(terry.getPublicKey().getValue()).replaceAll("'","\'");
+        String modul = Util.bigIntToString(terry.getPublicKey().getModul()).replaceAll("'","\'");
+        String sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + " , '" +
+                terry.getName() + "' , '" +
+                value + "' , '" +
+                modul + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        value = Util.bigIntToString(john.getPublicKey().getValue()).replaceAll("'","\'");
+        modul = Util.bigIntToString(john.getPublicKey().getModul()).replaceAll("'","\'");
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
+                john.getName() + "','" +
+                value + "','" +
+                modul + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        value = Util.bigIntToString(lara.getPublicKey().getValue()).replaceAll("'","\'");
+        modul = Util.bigIntToString(lara.getPublicKey().getModul()).replaceAll("'","\'");
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
+                lara.getName() + "','" +
+                value + "','" +
+                modul + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        value = Util.bigIntToString(stacey.getPublicKey().getValue()).replaceAll("'","\'");
+        modul = Util.bigIntToString(stacey.getPublicKey().getModul()).replaceAll("'","\'");
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
+                stacey.getName() + "','" +
+                value + "','" +
+                modul + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
         if (result) {
             db.setTransactionSuccessful();
         }
         db.endTransaction();
+    }
 
+    public void setChats() {
+        boolean result = true;
+        ChatBE terry = new ChatBE(0, getContactByName("Terry"));
+        ChatBE john = new ChatBE(1, getContactByName("John"));
+        ChatBE lara = new ChatBE(2, getContactByName("Lara"));
+        ChatBE stacey = new ChatBE(3, getContactByName("Stacey"));
+
+        db.beginTransaction();
+        String sql = "INSERT INTO " + FeedReaderContract.FeedEntryChats.TABLE_NAME + "(id,partner,timer) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryChats.TABLE_NAME) + ",'" +
+                terry.name + "','" +
+                Const.DEFAULT_DESTRUCTION_TIMER + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryChats.TABLE_NAME + "(id,partner,timer) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryChats.TABLE_NAME) + ",'" +
+                john.name + "','" +
+                Const.DEFAULT_DESTRUCTION_TIMER + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryChats.TABLE_NAME + "(id,partner,timer) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryChats.TABLE_NAME) + ",'" +
+                lara.name + "','" +
+                Const.DEFAULT_DESTRUCTION_TIMER + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        sql = "INSERT INTO " + FeedReaderContract.FeedEntryChats.TABLE_NAME + "(id,partner,timer) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryChats.TABLE_NAME) + ",'" +
+                stacey.name + "','" +
+                Const.DEFAULT_DESTRUCTION_TIMER + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        if (result) {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
     }
 
     public boolean copyDbToExternal() {
@@ -280,11 +396,65 @@ public class Controller {
     }
 
     public void loadChatList() {
-        model.chats = new ArrayList<>();
-        model.chats.add(new ChatBE(model.contacts.get(0)));
-        model.chats.add(new ChatBE(model.contacts.get(1)));
-        model.chats.add(new ChatBE(model.contacts.get(2)));
-        model.chats.add(new ChatBE(model.contacts.get(3)));
+        loadChatsFromDB();
+    }
+    // endregion
+
+    // region Server-Requests
+    public boolean setUserServer(PublicKey pub, String signedName) {
+        return false;
+    }
+
+    public ContactBE getUserServer(String name) {
+        return null;
+    }
+
+    public List<MessageBE> getMessagesServer(String name) {
+        // First request code with name
+        // then sign code to get messages
+        return null;
+    }
+
+    public boolean sendMessageServer(String signedMessage, String name) {
+        return false;
+    }
+    // endregion
+
+    // region get Stuff
+    public ContactBE getContactByName(String name) {
+        for (ContactBE c : model.contacts) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ContactBE getContactById(int id) {
+        for (ContactBE c : model.contacts) {
+            if (c.getId() == id) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ChatBE getFirstChatByName(String name) {
+        for (ChatBE c : model.chats) {
+            if (c.name.equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ChatBE getChatById(int id) {
+        for (ChatBE c : model.chats) {
+            if (c.id == id) {
+                return c;
+            }
+        }
+        return null;
     }
     // endregion
 

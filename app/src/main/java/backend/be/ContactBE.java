@@ -1,5 +1,6 @@
 package backend.be;
 
+import backend.PrivateKey;
 import backend.PublicKey;
 
 /**
@@ -11,6 +12,10 @@ public class ContactBE {
     int id;
     String name;
     PublicKey publicKey;
+
+    public static ContactBE getDummyContact() {
+        return new ContactBE("Testdummy", PrivateKey.generateRandomKey().publicKey, -12);
+    }
 
     public ContactBE() { }
 
@@ -43,5 +48,13 @@ public class ContactBE {
 
     public String getName() {
         return name;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

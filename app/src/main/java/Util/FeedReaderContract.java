@@ -18,9 +18,23 @@ public final class FeedReaderContract {
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY," +
-                COLUMN_NAME + " TEXT," +
-                COLUMN_KEY + " TEXT," +
-                COLUMN_MODUL + " TEXT)";
+                COLUMN_NAME + " VARCHAR," +
+                COLUMN_KEY + " VARCHAR," +
+                COLUMN_MODUL + " VARCHAR)";
+        public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
+                TABLE_NAME;
+    }
+
+    public static class FeedEntryChats implements BaseColumns {
+        public static final String TABLE_NAME = "chats";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_PARTNER = "partner";
+        public static final String COLUMN_DESTRUCTION_TIMER = "timer";
+
+        public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY," +
+                COLUMN_PARTNER + " VARCHAR," +
+                COLUMN_DESTRUCTION_TIMER + " INTEGER)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;
     }
@@ -35,10 +49,10 @@ public final class FeedReaderContract {
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY," +
-                COLUMN_IO + " TEXT," +
+                COLUMN_IO + " VARCHAR," +
                 COLUMN_PARTNER + " INTEGER," +
-                COLUMN_CONTENT + " TEXT," +
-                COLUMN_TIMESTAMP + " TEXT)";
+                COLUMN_CONTENT + " VARCHAR," +
+                COLUMN_TIMESTAMP + " VARCHAR)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;
     }
@@ -49,7 +63,7 @@ public final class FeedReaderContract {
         public static final String COLUMN_VALUE = "seq_val";
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(" +
-                COLUMN_TABLE + " TEXT PRIMARY KEY," +
+                COLUMN_TABLE + " VARCHAR PRIMARY KEY," +
                 COLUMN_VALUE + " INTEGER)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;

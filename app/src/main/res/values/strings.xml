@@ -3,7 +3,7 @@
     <!-- New Conversation, New Group, Contact List, Settings, About, default profile portait-->
 
     <!-- Server Anfragen:-->
-    <!-- boolean setUser(pubKey, signed name), User getUser(name), List<Message> getMessages(signed name), boolean sendMessage(encr. message)-->
+    <!-- boolean setUser(pubKey, signed name), User getUser(name), List<Message> getMessages(name), boolean sendMessage(signed message, name)-->
     <string name="app_name">TrustMessenger</string>
     <!-- Strings related to login -->
     <string name="welcome">Hello, </string>
@@ -56,4 +56,6 @@
     <string name="settings_save_db">Save Database</string>
     <string name="settings_save_db_success">DB saved successfully</string>
     <string name="settings_save_db_error">There was an error saving the DB</string>
+    <!-- Strings used in pre-Alpha -->
+    <string name="functionality_not_implemented">This functionality has not been implemented yet.</string>
 </resources>

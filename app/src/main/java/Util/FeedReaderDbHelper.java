@@ -31,6 +31,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_CREATE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_CREATE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_CREATE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryChats.SQL_CREATE_ENTRIES);
     }
 
     @Override
@@ -41,6 +42,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_DELETE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_DELETE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_DELETE_ENTRIES);
+        db.execSQL(FeedReaderContract.FeedEntryChats.SQL_DELETE_ENTRIES);
         onCreate(db);
     }
 
@@ -74,6 +76,10 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
             args[0] = FeedReaderContract.FeedEntrySequence.TABLE_NAME;
             if (!db.rawQuery(sql,args).moveToFirst()) {
                 db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_CREATE_ENTRIES);
+            }
+            args[0] = FeedReaderContract.FeedEntryChats.TABLE_NAME;
+            if (!db.rawQuery(sql,args).moveToFirst()) {
+                db.execSQL(FeedReaderContract.FeedEntryChats.SQL_CREATE_ENTRIES);
             }
         } else {
             createDataBase();
