@@ -24,7 +24,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     public SQLiteDatabase db;
 
     public FeedReaderDbHelper(Context context) {
-        super(context, DATABASE_EXTERNAL_PATH, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     @Override
     public void onCreate(SQLiteDatabase db) {

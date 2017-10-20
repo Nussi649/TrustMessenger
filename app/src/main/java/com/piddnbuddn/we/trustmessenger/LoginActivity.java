@@ -16,6 +16,7 @@ import backend.Const;
 import backend.Controller;
 
 import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * A login screen that offers login via email/password.
@@ -44,7 +45,9 @@ public class LoginActivity extends AbstractActivity {
         dialog.show();
         initController();
         getController().getAccountInfo(this);
-        mayRequestPermissions();
+        if (mayRequestPermissions()) {
+            requestPermission(getNextRequestedPermission());
+        }
         controller.setResources(getResources());
         FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this);
         dbHelper.openDataBase();
@@ -60,14 +63,33 @@ public class LoginActivity extends AbstractActivity {
         if (checkSelfPermission(INTERNET) == PackageManager.PERMISSION_DENIED) {
             result = true;
         }
+        if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            result = true;
+        }
         return result;
     }
 
+    private int getNextRequestedPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return 0;
+        }
+        if (checkSelfPermission(INTERNET) == PackageManager.PERMISSION_DENIED) {
+            return Const.REQUEST_INTERNET;
+        }
+        if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            return Const.REQUEST_WRITE_EXTERNAL_STORAGE;
+        }
+        return -1;
+    }
+
     private void requestPermission(int requestCode) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { return; }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || requestCode == -1) { return; }
         switch (requestCode) {
             case Const.REQUEST_INTERNET:
                 ActivityCompat.requestPermissions(this, new String[]{INTERNET}, Const.REQUEST_INTERNET);
+                break;
+            case Const.REQUEST_WRITE_EXTERNAL_STORAGE:
+                ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, Const.REQUEST_WRITE_EXTERNAL_STORAGE);
                 break;
             default:
                 break;
@@ -84,9 +106,20 @@ public class LoginActivity extends AbstractActivity {
         switch (requestCode) {
             case Const.REQUEST_INTERNET:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        requestPermission(Const.REQUEST_WRITE_EXTERNAL_STORAGE);
+                    }
                 } else {
                     requestPermission(Const.REQUEST_INTERNET);
+                }
+                break;
+            case Const.REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (checkSelfPermission(INTERNET) == PackageManager.PERMISSION_DENIED) {
+                        requestPermission(Const.REQUEST_INTERNET);
+                    }
+                } else {
+                    requestPermission(Const.REQUEST_WRITE_EXTERNAL_STORAGE);
                 }
                 break;
             default:

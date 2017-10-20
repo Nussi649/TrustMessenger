@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.piddnbuddn.we.trustmessenger.R;
 
@@ -14,10 +16,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import Util.Util;
 import Util.FeedReaderContract;
+import Util.FeedReaderDbHelper;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 import backend.be.CursorToBETransform;
@@ -141,21 +145,27 @@ public class Controller {
         db = database;
         if (DatabaseUtils.queryNumEntries(db, "sequences") == 0) {
             initiateSequenceValues();
-            //setContacts();
+            setContacts();
         }
     }
 
     private void initiateSequenceValues() {
         boolean result = true;
         db.beginTransaction();
-        ContentValues values = new ContentValues();
-        values.put("table","contacts");
-        values.put("seq_val", 0);
-        result &= (db.insert("sequences", null, values) != -1);
-        values = new ContentValues();
-        values.put("table","messages");
-        values.put("seq_val", 0);
-        result &= (db.insert("sequences", null, values) != -1);
+        String sql1 = "INSERT INTO sequences(seq_val,tablen) VALUES (0,'contacts')";
+        String sql2 = "INSERT INTO sequences(seq_val,tablen) VALUES (0,'messages')";
+        try {
+            db.execSQL(sql1);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        try {
+            db.execSQL(sql2);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
         if (result) {
             db.setTransactionSuccessful();
         }
@@ -165,12 +175,16 @@ public class Controller {
     private int getSequenceValue(String table) {
         String sql = "SELECT seq_val FROM sequences WHERE " + FeedReaderContract.FeedEntrySequence.COLUMN_TABLE + "='" + table + "'";
         db.beginTransaction();
-        int seqVal = CursorToBETransform.transformToSequenceValue(db.rawQuery(sql, null)) + 1;
-        ContentValues values = new ContentValues();
-        values.put("seq_val", seqVal);
-        String[] selectionArgs = {table};
-        if (db.update("sequences", values, "table='?'", selectionArgs) == 1) {
-
+        int seqVal = CursorToBETransform.transformToSequenceValue(db.rawQuery(sql, null));
+        seqVal++;
+        boolean result = true;
+        try {
+            db.execSQL("UPDATE sequences SET seq_val='" + seqVal + "' WHERE " + FeedReaderContract.FeedEntrySequence.COLUMN_TABLE + "='" + table + "'");
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        if (result) {
             db.setTransactionSuccessful();
         }
         db.endTransaction();
@@ -189,15 +203,14 @@ public class Controller {
     }
 
     private void cheat() {
-        db.beginTransaction();
-        db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_DELETE_ENTRIES);
-        db.execSQL(FeedReaderContract.FeedEntrySequence.SQL_CREATE_ENTRIES);
-        db.setTransactionSuccessful();
-        db.endTransaction();
+        String sql2 = "SELECT * FROM sequences";
+        Cursor cursor = db.rawQuery(sql2, null);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(1);
+        }
     }
 
     public void setContacts() {
-        //cheat();
         boolean result = true;
         ContactBE terry = new ContactBE(getString(R.string.buddy_1), PrivateKey.generateRandomKey().publicKey);
         ContactBE john = new ContactBE(getString(R.string.buddy_2), PrivateKey.generateRandomKey().publicKey);
@@ -235,16 +248,35 @@ public class Controller {
         db.endTransaction();
 
     }
+
+    public boolean copyDbToExternal() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+
+            if (sd.canWrite()) {
+                String currentDBPath = FeedReaderDbHelper.DATABASE_PATH + FeedReaderDbHelper.DATABASE_NAME;
+                String backupDBPath = FeedReaderDbHelper.DATABASE_NAME;
+                File currentDB = new File(currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+
+                FileChannel src = new FileInputStream(currentDB).getChannel();
+                FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                dst.transferFrom(src, 0, src.size());
+                src.close();
+                dst.close();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     // endregion
 
     // region load things
     public void loadContactList() {
-        model.contacts = new ArrayList<>();
-        model.contacts.add(new ContactBE(getString(R.string.buddy_1)));
-        model.contacts.add(new ContactBE(getString(R.string.buddy_2)));
-        model.contacts.add(new ContactBE(getString(R.string.buddy_3)));
-        model.contacts.add(new ContactBE(getString(R.string.buddy_4)));
-//        loadContactsFromDB();
+        loadContactsFromDB();
     }
 
     public void loadChatList() {

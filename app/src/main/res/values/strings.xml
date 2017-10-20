@@ -49,4 +49,8 @@
     <string name="activity_overview">Chats</string>
     <string name="activity_register">Create Private Key</string>
     <string name="activity_settings">Settings</string>
+    <!-- Strings used in Settings -->
+    <string name="settings_save_db">Save Database</string>
+    <string name="settings_save_db_success">DB saved successfully</string>
+    <string name="settings_save_db_error">There was an error saving the DB</string>
 </resources>
