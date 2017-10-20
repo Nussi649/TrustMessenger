@@ -1,6 +1,9 @@
 <resources>
     <!-- Icons Needed:-->
     <!-- New Conversation, New Group, Contact List, Settings, About, default profile portait-->
+
+    <!-- Server Anfragen:-->
+    <!-- boolean setUser(pubKey, signed name), User getUser(name), List<Message> getMessages(signed name), boolean sendMessage(encr. message)-->
     <string name="app_name">TrustMessenger</string>
     <!-- Strings related to login -->
     <string name="welcome">Hello, </string>
