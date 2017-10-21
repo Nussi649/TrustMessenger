@@ -30,4 +30,5 @@ public class Const {
     // FORMATS
     public static final String DATETIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static final String DATE_FORMAT = "dd.MM.yyyy";
+    public static final String TIME_FORMAT = "hh:mm a";
 }

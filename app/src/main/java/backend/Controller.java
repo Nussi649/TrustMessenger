@@ -412,7 +412,7 @@ public class Controller {
             String sql = "INSERT INTO messages (id, in_out, partner, content, time) VALUES (" +
                     getSequenceValue(FeedReaderContract.FeedEntryMessages.TABLE_NAME) + ",'" +
                     (msg instanceof IncMessageBE ? "i" : "o") + "'," +
-                    msg.getChatID() + ",'" +
+                    getFirstChatByName(msg.getPartner().getName()).id + ",'" +
                     msg.content + "','" +
                     sdf.format(msg.timeSent) + "')";
             try {

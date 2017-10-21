@@ -2,10 +2,12 @@ package com.piddnbuddn.we.trustmessenger;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import backend.MessageSegment;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 import backend.be.MessageBE;
@@ -45,6 +47,10 @@ public class ConversationActivity extends AbstractActivity {
         setContentView(R.layout.activity_conversation);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        LinearLayout container = (LinearLayout)findViewById(R.id.messages_container);
+        for (MessageBE msg : messages) {
+            container.addView(new MessageSegment(this, msg));
+        }
         buildDrawer();
     }
 }

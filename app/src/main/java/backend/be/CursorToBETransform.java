@@ -101,6 +101,7 @@ public abstract class CursorToBETransform {
                     re.add(new OutMessageBE(content, time, con.getContactById(chatId)));
                 }
             } while (cursor.moveToNext());
+            return re;
         }
         return null;
     }

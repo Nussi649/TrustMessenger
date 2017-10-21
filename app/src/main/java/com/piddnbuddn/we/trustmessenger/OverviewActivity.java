@@ -54,8 +54,7 @@ public class OverviewActivity extends AbstractActivity {
         if (chats != null) {
             for (ChatBE chat : chats) {
                 final ChatBE finalChat = chat;
-                //ChatSegment chatSegment = new ChatSegment(this, finalChat, controller.loadFirstMessageOfChatFromDB(finalChat.id));
-                ChatSegment chatSegment = new ChatSegment(this, finalChat, getAnyMessage());
+                ChatSegment chatSegment = new ChatSegment(this, finalChat, controller.loadFirstMessageOfChatFromDB(finalChat.id));
                 chatSegment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
