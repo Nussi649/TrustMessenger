@@ -522,6 +522,34 @@ public class Controller {
     }
     // endregion
 
+    // region send/set Stuff
+    public void sendMessage(MessageBE msg) {
+
+    }
+
+    public void saveMessageOfChat(MessageBE msg, ChatBE chat) {
+        String sql = "INSERT INTO messages (id,in_out,partner,content,time) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryMessages.TABLE_NAME) + ",'" +
+                (msg instanceof IncMessageBE ? "i" : "o") + "'," +
+                chat.id + ",'" +
+                msg.content + "','" +
+                sdf.format(msg.timeSent) + "')";
+        boolean result = true;
+        db.beginTransaction();
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        if (result)
+        {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+    }
+    // endregion
+
     public void setCurChat(ChatBE chat){
         model.curChat = chat;
     }

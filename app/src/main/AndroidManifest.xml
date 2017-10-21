@@ -30,8 +30,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:parentActivityName=".LoginActivity" />
         <activity android:name=".OverviewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:parentActivityName=".LoginActivity"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".ContactListActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:parentActivityName=".OverviewActivity"/>

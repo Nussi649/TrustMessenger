@@ -32,6 +32,12 @@ public class OverviewActivity extends AbstractActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        reloadChatsUI();
+    }
+
+    @Override
     protected void workingThread() {
         getData();
     }
@@ -47,11 +53,10 @@ public class OverviewActivity extends AbstractActivity {
         chats = model.chats;
     }
 
-    private void populateUI() {
+    private void reloadChatsUI() {
         mainContainer = (LinearLayout)findViewById(R.id.main_content);
-        setTitle(R.string.activity_overview);
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         if (chats != null) {
+            mainContainer.removeAllViews();
             for (ChatBE chat : chats) {
                 final ChatBE finalChat = chat;
                 ChatSegment chatSegment = new ChatSegment(this, finalChat, controller.loadFirstMessageOfChatFromDB(finalChat.id));
@@ -65,7 +70,13 @@ public class OverviewActivity extends AbstractActivity {
                 mainContainer.addView(chatSegment);
             }
         }
+    }
+
+    private void populateUI() {
+        setTitle(R.string.activity_overview);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         buildDrawer();
+        ((Toolbar)findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_action_name);
     }
 
     private MessageBE getAnyMessage() {

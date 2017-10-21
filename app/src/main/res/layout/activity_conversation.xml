@@ -47,6 +47,7 @@
                 android:inputType="textPersonName"
                 android:text="" />
             <Button
+                android:id="@+id/conversation_button_send"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:text="@string/message_send"/>
