@@ -17,7 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import Util.Util;
@@ -26,7 +28,9 @@ import Util.FeedReaderDbHelper;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 import backend.be.CursorToBETransform;
+import backend.be.IncMessageBE;
 import backend.be.MessageBE;
+import backend.be.OutMessageBE;
 
 import static Util.Util.sha256;
 
@@ -39,6 +43,7 @@ public class Controller {
     public static Controller instance;
     Model model;
     SQLiteDatabase db;
+    SimpleDateFormat sdf = new SimpleDateFormat(Const.DATETIME_FORMAT);
 
     private Controller() {
 
@@ -152,6 +157,7 @@ public class Controller {
             loadContactsFromDB();
             setChats();
             loadChatsFromDB();
+            setMessages();
         }
     }
 
@@ -226,6 +232,30 @@ public class Controller {
         db.endTransaction();
     }
 
+    public MessageBE loadFirstMessageOfChatFromDB(int id) {
+        String sql = "SELECT * FROM messages WHERE partner=" + id + " ORDER BY id DESC";
+        db.beginTransaction();
+        Cursor cursor = db.rawQuery(sql, null);
+        MessageBE message = CursorToBETransform.transformToSingleMessage(cursor, this);
+        if (message != null) {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+        return message;
+    }
+
+    public List<MessageBE> loadMessagesOfChatFromDB(int id) {
+        String sql = "SELECT * FROM messages WHERE partner=" + id;
+        db.beginTransaction();
+        Cursor cursor = db.rawQuery(sql, null);
+        List<MessageBE> re = CursorToBETransform.transformToMessageList(cursor, this);
+        if (re != null) {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+        return re;
+    }
+
     private void resetDatabase() {
         db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_DELETE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_DELETE_ENTRIES);
@@ -245,6 +275,7 @@ public class Controller {
         }
     }
 
+    // region populate database
     public void setContacts() {
         boolean result = true;
         ContactBE terry = new ContactBE(getString(R.string.buddy_1), PrivateKey.generateRandomKey().publicKey);
@@ -253,8 +284,8 @@ public class Controller {
         ContactBE stacey = new ContactBE(getString(R.string.buddy_4), PrivateKey.generateRandomKey().publicKey);
 
         db.beginTransaction();
-        String value = Util.bigIntToString(terry.getPublicKey().getValue()).replaceAll("'","\'");
-        String modul = Util.bigIntToString(terry.getPublicKey().getModul()).replaceAll("'","\'");
+        String value = Const.DEFAULT_KEY_VALUE;
+        String modul = Const.DEFAULT_KEY_MODUL;
         String sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
                 getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + " , '" +
                 terry.getName() + "' , '" +
@@ -266,8 +297,6 @@ public class Controller {
             sqle.printStackTrace();
             result = false;
         }
-        value = Util.bigIntToString(john.getPublicKey().getValue()).replaceAll("'","\'");
-        modul = Util.bigIntToString(john.getPublicKey().getModul()).replaceAll("'","\'");
         sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
                 getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
                 john.getName() + "','" +
@@ -279,8 +308,6 @@ public class Controller {
             sqle.printStackTrace();
             result = false;
         }
-        value = Util.bigIntToString(lara.getPublicKey().getValue()).replaceAll("'","\'");
-        modul = Util.bigIntToString(lara.getPublicKey().getModul()).replaceAll("'","\'");
         sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
                 getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
                 lara.getName() + "','" +
@@ -292,8 +319,6 @@ public class Controller {
             sqle.printStackTrace();
             result = false;
         }
-        value = Util.bigIntToString(stacey.getPublicKey().getValue()).replaceAll("'","\'");
-        modul = Util.bigIntToString(stacey.getPublicKey().getModul()).replaceAll("'","\'");
         sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
                 getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + ",'" +
                 stacey.getName() + "','" +
@@ -364,6 +389,45 @@ public class Controller {
         }
         db.endTransaction();
     }
+
+    public void setMessages() {
+        boolean result = true;
+        List<MessageBE> msgs = new ArrayList<>();
+        msgs.add(new IncMessageBE("Hey there!", new Date(117,9,20,23,24,05), getContactByName(getString(R.string.buddy_1))));
+        msgs.add(new OutMessageBE("Whats up?", new Date(117,9,20,23,24,15), getContactByName(getString(R.string.buddy_1))));
+        msgs.add(new IncMessageBE("Nothing man, good to hear from you!", new Date(117,9,20,23,24,05), getContactByName(getString(R.string.buddy_1))));
+        msgs.add(new OutMessageBE("ne", new Date(2017,10,21,01,41,45), getContactByName(getString(R.string.buddy_2))));
+        msgs.add(new OutMessageBE("noch net", new Date(2017,10,01,23,41,50), getContactByName(getString(R.string.buddy_2))));
+        msgs.add(new OutMessageBE("aber halt so ^^", new Date(2017,10,01,41,24,55), getContactByName(getString(R.string.buddy_2))));
+        msgs.add(new IncMessageBE("jo", new Date(2017,10,21,01,42,02), getContactByName(getString(R.string.buddy_2))));
+        msgs.add(new OutMessageBE("jo ich hab ein problem, zu dem mir gerade keine lösung einfällt", new Date(2017,10,21,01,36,05), getContactByName(getString(R.string.buddy_3))));
+        msgs.add(new IncMessageBE("suh", new Date(2017,10,21,01,36,06), getContactByName(getString(R.string.buddy_3))));
+        msgs.add(new OutMessageBE("die public keys sind strings", new Date(2017,10,21,01,36,07), getContactByName(getString(R.string.buddy_3))));
+        msgs.add(new IncMessageBE("ja bestimmt", new Date(2017,10,20,11,48,07), getContactByName(getString(R.string.buddy_4))));
+        msgs.add(new IncMessageBE("aslloooo", new Date(2017,10,20,14,01,07), getContactByName(getString(R.string.buddy_4))));
+        msgs.add(new IncMessageBE("ich hab jetzt ma zeit nach nem server zu schauen", new Date(2017,10,20,14,02,07), getContactByName(getString(R.string.buddy_4))));
+        msgs.add(new IncMessageBE("1€ pro monat aber 24 monate laufzeit", new Date(2017,10,20,14,02,27), getContactByName(getString(R.string.buddy_4))));
+        db.beginTransaction();
+        for (MessageBE msg : msgs) {
+            String sql = "INSERT INTO messages (id, in_out, partner, content, time) VALUES (" +
+                    getSequenceValue(FeedReaderContract.FeedEntryMessages.TABLE_NAME) + ",'" +
+                    (msg instanceof IncMessageBE ? "i" : "o") + "'," +
+                    msg.getChatID() + ",'" +
+                    msg.content + "','" +
+                    sdf.format(msg.timeSent) + "')";
+            try {
+                db.execSQL(sql);
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+                result = false;
+            }
+        }
+        if (result) {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+    }
+    // endregion
 
     public boolean copyDbToExternal() {
         try {

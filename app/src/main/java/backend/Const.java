@@ -22,4 +22,12 @@ public class Const {
 
     // CHATS
     public static final int DEFAULT_DESTRUCTION_TIMER = 60 * 60 * 24;
+
+    // TESTING PURPOSES
+    public static final String DEFAULT_KEY_VALUE = "mvsijdlkjnxkbjxdjknrdgkxdnbcvn";
+    public static final String DEFAULT_KEY_MODUL = "asfjsdflskjnfleiufslduvixlkjnxdrgysfdsfysefy";
+
+    // FORMATS
+    public static final String DATETIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
+    public static final String DATE_FORMAT = "dd.MM.yyyy";
 }

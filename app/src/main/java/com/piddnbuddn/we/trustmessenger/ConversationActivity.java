@@ -37,7 +37,7 @@ public class ConversationActivity extends AbstractActivity {
     }
 
     private void loadMessages() {
-        messages = new ArrayList<>();
+        messages = getController().loadMessagesOfChatFromDB(chat.id);
     }
 
     private void populateUI() {

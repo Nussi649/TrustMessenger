@@ -17,9 +17,13 @@ public final class FeedReaderContract {
         public static final String COLUMN_MODUL = "modul";
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
+                // sequence value INT for ID
                 COLUMN_ID + " INTEGER PRIMARY KEY," +
+                // name as String
                 COLUMN_NAME + " VARCHAR," +
+                // key value as String
                 COLUMN_KEY + " VARCHAR," +
+                // key modul as String
                 COLUMN_MODUL + " VARCHAR)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;
@@ -32,8 +36,11 @@ public final class FeedReaderContract {
         public static final String COLUMN_DESTRUCTION_TIMER = "timer";
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
+                // sequence value INT for ID
                 COLUMN_ID + " INTEGER PRIMARY KEY," +
+                // name of partner as String
                 COLUMN_PARTNER + " VARCHAR," +
+                // duration of self destruction timer in seconds
                 COLUMN_DESTRUCTION_TIMER + " INTEGER)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;
@@ -48,10 +55,15 @@ public final class FeedReaderContract {
         public static final String COLUMN_TIMESTAMP = "time";
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + " (" +
+                // sequence value INT for ID
                 COLUMN_ID + " INTEGER PRIMARY KEY," +
+                // "i" for incoming msg, "o" for outgoing msg
                 COLUMN_IO + " VARCHAR," +
+                // ID of chat
                 COLUMN_PARTNER + " INTEGER," +
+                // Content as String
                 COLUMN_CONTENT + " VARCHAR," +
+                // Timestamp as String
                 COLUMN_TIMESTAMP + " VARCHAR)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;
@@ -63,7 +75,9 @@ public final class FeedReaderContract {
         public static final String COLUMN_VALUE = "seq_val";
 
         public static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(" +
+                // table name as primary key
                 COLUMN_TABLE + " VARCHAR PRIMARY KEY," +
+                // current sequence value as INT
                 COLUMN_VALUE + " INTEGER)";
         public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " +
                 TABLE_NAME;

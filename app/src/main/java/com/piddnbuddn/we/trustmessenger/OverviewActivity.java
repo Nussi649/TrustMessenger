@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import backend.ChatSegment;
 import backend.be.ChatBE;
+import backend.be.ContactBE;
+import backend.be.IncMessageBE;
+import backend.be.MessageBE;
 
 /**
  * Created by ich on 14.10.2017.
@@ -50,7 +54,8 @@ public class OverviewActivity extends AbstractActivity {
         if (chats != null) {
             for (ChatBE chat : chats) {
                 final ChatBE finalChat = chat;
-                ChatSegment chatSegment = new ChatSegment(this, finalChat);
+                //ChatSegment chatSegment = new ChatSegment(this, finalChat, controller.loadFirstMessageOfChatFromDB(finalChat.id));
+                ChatSegment chatSegment = new ChatSegment(this, finalChat, getAnyMessage());
                 chatSegment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -62,5 +67,10 @@ public class OverviewActivity extends AbstractActivity {
             }
         }
         buildDrawer();
+    }
+
+    private MessageBE getAnyMessage() {
+        IncMessageBE re = new IncMessageBE("some content", new Date(2017,10,21,01,36,06), controller.getContactByName(getString(R.string.buddy_2)));
+        return re;
     }
 }
