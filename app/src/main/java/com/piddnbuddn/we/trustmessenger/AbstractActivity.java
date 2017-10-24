@@ -11,12 +11,15 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.HttpURLConnection;
 
 import backend.Model;
 import backend.Controller;
@@ -214,8 +217,17 @@ public abstract class AbstractActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
                 }
             };
+
             drawerToggle.setDrawerIndicatorEnabled(true);
             drawerLayout.addDrawerListener(drawerToggle);
+            Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_action_name);
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                }
+            });
 
             // set Click Listeners
             TextView newConversation = (TextView)findViewById(R.id.navigation_new_conversation);

@@ -8,18 +8,35 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 
 import com.piddnbuddn.we.trustmessenger.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import Util.Util;
@@ -44,6 +61,7 @@ public class Controller {
     Model model;
     SQLiteDatabase db;
     SimpleDateFormat sdf = new SimpleDateFormat(Const.DATETIME_FORMAT);
+    HttpURLConnection httpClient = null;
 
     private Controller() {
 
@@ -465,8 +483,16 @@ public class Controller {
     // endregion
 
     // region Server-Requests
-    public boolean setUserServer(PublicKey pub, String signedName) {
-        return false;
+    public void setUserServer(final PublicKey pub, final String signedName) {
+        boolean result = false;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String answer = setUserServerWork(pub, signedName);
+                handleSetUserResponse(answer);
+            }
+        });
+        thread.run();
     }
 
     public ContactBE getUserServer(String name) {
@@ -482,6 +508,69 @@ public class Controller {
     public boolean sendMessageServer(String signedMessage, String name) {
         return false;
     }
+    // endregion
+
+    // region Server-Request Working Threads
+
+    private String setUserServerWork(PublicKey pkey, String signedName) {
+        URL url = null;
+        JSONObject postDataParams = new JSONObject();
+        try {
+            postDataParams.put(Const.KEY_PUBLIC_VALUE, Util.bigIntToString(pkey.getValue()));
+            postDataParams.put(Const.KEY_PUBLIC_MODUL, Util.bigIntToString(pkey.getModul()));
+            postDataParams.put(Const.KEY_SIGNED_USERNAME, signedName);
+            url = new URL(Const.SERVER_URI);
+            httpClient = (HttpURLConnection) url.openConnection();
+            httpClient.setRequestMethod(Const.PROTOCOL_POST);
+        } catch (MalformedURLException murle) {
+            murle.printStackTrace();
+            return null;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        } catch (JSONException jsone) {
+            jsone.printStackTrace();
+            return null;
+        }
+        httpClient.setDoInput(true);
+        httpClient.setDoOutput(true);
+        httpClient.setReadTimeout(15000);
+        httpClient.setConnectTimeout(15000);
+        OutputStream outputPost;
+        BufferedWriter writer;
+        int responseCode;
+        try {
+            outputPost = new BufferedOutputStream(httpClient.getOutputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
+            writer.write(getPostDataString(postDataParams));
+            writer.flush();
+            writer.close();
+            outputPost.close();
+            responseCode = httpClient.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                in.close();
+                // here sb.toString() contains the answer
+                return sb.toString();
+            } else {
+                Log.e("response code", new String("" + responseCode));
+                return null;
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // endregion
 
     // region get Stuff
@@ -549,6 +638,42 @@ public class Controller {
         db.endTransaction();
     }
     // endregion
+
+    public String getPostDataString(JSONObject params) throws Exception {
+
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        Iterator<String> itr = params.keys();
+
+        while(itr.hasNext()){
+
+            String key= itr.next();
+            Object value = params.get(key);
+
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(key, "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
+
+        }
+        return result.toString();
+    }
+
+    private void handleSetUserResponse(String response) {
+        switch (response) {
+            case Const.ANSWER_CODE_SUCCESS:
+                break;
+            case Const.ANSWER_CODE_USERNAME_NA:
+                break;
+            default:
+                break;
+        }
+    }
 
     public void setCurChat(ChatBE chat){
         model.curChat = chat;
