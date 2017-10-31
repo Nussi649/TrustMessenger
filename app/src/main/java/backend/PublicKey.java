@@ -20,4 +20,8 @@ public class PublicKey extends Key {
         BigInteger mesEnc = mes.modPow(getValue(), getModul());
         return Util.bigIntToString(mesEnc);
     }
+
+    public String checkSignedMessage(String message) {
+        return encrypt(message);
+    }
 }

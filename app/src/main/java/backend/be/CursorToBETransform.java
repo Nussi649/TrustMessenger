@@ -2,6 +2,7 @@ package backend.be;
 
 import android.database.Cursor;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -78,6 +79,14 @@ public abstract class CursorToBETransform {
             }
         }
         return null;
+    }
+
+    public static ContactBE transformToContact(Cursor cursor) {
+        int id = cursor.getInt(0);
+        String name = cursor.getString(1);
+        BigInteger keyValue = Util.stringToBigInt(cursor.getString(2));
+        BigInteger keyModul = Util.stringToBigInt(cursor.getString(3));
+        return new ContactBE(name, new PublicKey(keyValue, keyModul), id);
     }
 
     public static List<MessageBE> transformToMessageList(Cursor cursor, Controller con) {

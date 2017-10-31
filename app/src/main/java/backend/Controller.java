@@ -8,6 +8,7 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.JsonReader;
 import android.util.Log;
 
 import com.piddnbuddn.we.trustmessenger.R;
@@ -274,6 +275,39 @@ public class Controller {
         return re;
     }
 
+    public ContactBE getContactFromDB(String username) {
+        String sql = "SELECT FROM " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntryContacts.COLUMN_NAME + "='" +
+                username + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+        return CursorToBETransform.transformToContact(cursor);
+    }
+
+    public ContactBE getContactFromDB(int id) {
+        String sql = "SELECT FROM " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntryContacts.COLUMN_ID + "=" +
+                id;
+        Cursor cursor = db.rawQuery(sql, null);
+        return CursorToBETransform.transformToContact(cursor);
+    }
+
+    public boolean saveContactToDB(ContactBE newContact) {
+        if (getContactFromDB(newContact.getName()) != null) {
+            return false;
+        }
+        boolean result = true;
+        String sql = "INSERT INTO " + FeedReaderContract.FeedEntryContacts.TABLE_NAME + "(id,name,pub_key,modul) VALUES (" +
+                getSequenceValue(FeedReaderContract.FeedEntryContacts.TABLE_NAME) + " , '" +
+                newContact.getName() + "' , '" +
+                Util.bigIntToString(newContact.getPublicKey().getValue()) + "' , '" +
+                Util.bigIntToString(newContact.getPublicKey().getModul()) + "')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            result = false;
+        }
+        return result;
+    }
+
     private void resetDatabase() {
         db.execSQL(FeedReaderContract.FeedEntryContacts.SQL_DELETE_ENTRIES);
         db.execSQL(FeedReaderContract.FeedEntryMessages.SQL_DELETE_ENTRIES);
@@ -484,7 +518,6 @@ public class Controller {
 
     // region Server-Requests
     public void setUserServer(final PublicKey pub, final String signedName) {
-        boolean result = false;
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -494,8 +527,24 @@ public class Controller {
         });
         thread.run();
     }
-
-    public ContactBE getUserServer(String name) {
+        // needs to be run in separate thread!
+    public ContactBE getUserServer(final String name) {
+        String answer = getUserServerWork(name);
+        if (answer != null) {
+            switch (answer) {
+                case Const.ANSWER_CODE_USER:
+                    try {
+                        JSONObject jsonResponse = new JSONObject(answer);
+                    } catch (JSONException jsone) {
+                        jsone.printStackTrace();
+                    }
+                    break;
+                case Const.ANSWER_CODE_USERNAME_NA:
+                    return null;
+                default:
+                    return null;
+            }
+        }
         return null;
     }
 
@@ -513,13 +562,12 @@ public class Controller {
     // region Server-Request Working Threads
 
     private String setUserServerWork(PublicKey pkey, String signedName) {
-        URL url = null;
         JSONObject postDataParams = new JSONObject();
         try {
             postDataParams.put(Const.KEY_PUBLIC_VALUE, Util.bigIntToString(pkey.getValue()));
             postDataParams.put(Const.KEY_PUBLIC_MODUL, Util.bigIntToString(pkey.getModul()));
             postDataParams.put(Const.KEY_SIGNED_USERNAME, signedName);
-            url = new URL(Const.SERVER_URI);
+            URL url = new URL(Const.SERVER_URI);
             httpClient = (HttpURLConnection) url.openConnection();
             httpClient.setRequestMethod(Const.PROTOCOL_POST);
         } catch (MalformedURLException murle) {
@@ -571,44 +619,62 @@ public class Controller {
         }
     }
 
-    // endregion
-
-    // region get Stuff
-    public ContactBE getContactByName(String name) {
-        for (ContactBE c : model.contacts) {
-            if (c.getName().equals(name)) {
-                return c;
-            }
+    private String getUserServerWork(String username) {
+        JSONObject postDataParams = new JSONObject();
+        try {
+            postDataParams.put(Const.KEY_REQUEST_USERNAME, username);
+            URL url = new URL(Const.SERVER_URI);
+            httpClient = (HttpURLConnection) url.openConnection();
+            httpClient.setRequestMethod(Const.PROTOCOL_POST);
+        } catch (MalformedURLException murle) {
+            murle.printStackTrace();
+            return null;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        } catch (JSONException jsone) {
+            jsone.printStackTrace();
+            return null;
         }
-        return null;
+        httpClient.setDoInput(true);
+        httpClient.setDoOutput(true);
+        httpClient.setReadTimeout(15000);
+        httpClient.setConnectTimeout(15000);
+        OutputStream outputPost;
+        BufferedWriter writer;
+        int responseCode;
+        try {
+            outputPost = new BufferedOutputStream(httpClient.getOutputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
+            writer.write(getPostDataString(postDataParams));
+            writer.flush();
+            writer.close();
+            outputPost.close();
+            responseCode = httpClient.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                in.close();
+                // here sb.toString() contains the answer
+                return sb.toString();
+            } else {
+                Log.e("response code", new String("" + responseCode));
+                return null;
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public ContactBE getContactById(int id) {
-        for (ContactBE c : model.contacts) {
-            if (c.getId() == id) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    public ChatBE getFirstChatByName(String name) {
-        for (ChatBE c : model.chats) {
-            if (c.name.equals(name)) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    public ChatBE getChatById(int id) {
-        for (ChatBE c : model.chats) {
-            if (c.id == id) {
-                return c;
-            }
-        }
-        return null;
-    }
     // endregion
 
     // region send/set Stuff
@@ -675,6 +741,61 @@ public class Controller {
         }
     }
 
+    private void handleGetUserResponse(String response) {
+        switch (response) {
+            case Const.ANSWER_CODE_USER:
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                } catch (JSONException jsone) {
+                    jsone.printStackTrace();
+                }
+                break;
+            case Const.ANSWER_CODE_USERNAME_NA:
+                break;
+            default:
+                break;
+        }
+    }
+
+    // region get Stuff
+    public ContactBE getContactByName(String name) {
+        for (ContactBE c : model.contacts) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ContactBE getContactById(int id) {
+        for (ContactBE c : model.contacts) {
+            if (c.getId() == id) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ChatBE getFirstChatByName(String name) {
+        for (ChatBE c : model.chats) {
+            if (c.name.equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public ChatBE getChatById(int id) {
+        for (ChatBE c : model.chats) {
+            if (c.id == id) {
+                return c;
+            }
+        }
+        return null;
+    }
+    // endregion
+
+    // region set Stuff
     public void setCurChat(ChatBE chat){
         model.curChat = chat;
     }
@@ -682,4 +803,16 @@ public class Controller {
     public void setCurContact(ContactBE contact) {
         model.curContact = contact;
     }
+
+    public boolean addNewContact(ContactBE contact) {
+        if (getContactByName(contact.getName()) == null) {
+            if (saveContactToDB(contact)) {
+                model.contacts.add(contact);
+                return true;
+            }
+        }
+        return false;
+    }
+    // endregion
+
 }

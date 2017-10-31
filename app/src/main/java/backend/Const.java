@@ -38,6 +38,8 @@ public class Const {
     public static final String KEY_PUBLIC_VALUE = "PKeyValue";
     public static final String KEY_PUBLIC_MODUL = "PKeyModul";
     public static final String KEY_SIGNED_USERNAME = "signedUserName";
+    public static final String KEY_REQUEST_USERNAME = "reqUser";
     public static final String ANSWER_CODE_SUCCESS = "1";
-    public static final String ANSWER_CODE_USERNAME_NA = "nameNA";
+    public static final String ANSWER_CODE_USERNAME_NA = "userNA";
+    public static final String ANSWER_CODE_USER = "user";
 }
