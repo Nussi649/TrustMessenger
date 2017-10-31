@@ -76,7 +76,6 @@ public class OverviewActivity extends AbstractActivity {
         setTitle(R.string.activity_overview);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         buildDrawer();
-        ((Toolbar)findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_action_name);
     }
 
     private MessageBE getAnyMessage() {

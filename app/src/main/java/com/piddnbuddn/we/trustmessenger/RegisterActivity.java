@@ -89,7 +89,7 @@ public class RegisterActivity extends AbstractActivity {
     }
 
     private void sendToServer(PublicKey publicKey, String signedName) {
-
+        controller.setUserServer(publicKey, signedName);
     }
 
     public void doRegister() {

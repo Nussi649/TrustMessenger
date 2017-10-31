@@ -31,4 +31,15 @@ public class Const {
     public static final String DATETIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static final String DATE_FORMAT = "dd.MM.yyyy";
     public static final String TIME_FORMAT = "hh:mm a";
+
+    // CONNECTIVITY
+    public static final String SERVER_URI = "http://trustm.delta-networks.de";
+    public static final String PROTOCOL_POST = "POST";
+    public static final String KEY_PUBLIC_VALUE = "PKeyValue";
+    public static final String KEY_PUBLIC_MODUL = "PKeyModul";
+    public static final String KEY_SIGNED_USERNAME = "signedUserName";
+    public static final String KEY_REQUEST_USERNAME = "reqUser";
+    public static final String ANSWER_CODE_SUCCESS = "1";
+    public static final String ANSWER_CODE_USERNAME_NA = "userNA";
+    public static final String ANSWER_CODE_USER = "user";
 }

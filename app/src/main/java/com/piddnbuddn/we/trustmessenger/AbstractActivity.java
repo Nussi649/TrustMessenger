@@ -2,6 +2,7 @@ package com.piddnbuddn.we.trustmessenger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +20,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.HttpURLConnection;
+
 import backend.Model;
 import backend.Controller;
+import backend.be.ContactBE;
 
 /**
  * Created by ich on 07.10.2017.
@@ -179,6 +184,9 @@ public abstract class AbstractActivity extends AppCompatActivity {
     protected void showCustomDialog(String title, String message, int layoutID, DialogInterface.OnClickListener acceptListener, DialogInterface.OnClickListener cancelListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
+        if (message != null) {
+            builder.setMessage(message);
+        }
         builder.setPositiveButton(R.string.dialog_accept, acceptListener);
         builder.setNegativeButton(R.string.dialog_cancel, cancelListener);
         builder.setView(layoutID);
@@ -191,6 +199,34 @@ public abstract class AbstractActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.dialog_accept, acceptListener);
         builder.setView(layoutID);
         builder.create().show();
+    }
+
+    protected void showFindUserDialog() {
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                EditText edit = (EditText)((AlertDialog)dialog).findViewById(R.id.find_user_edit);
+                final String name = edit.getText().toString();
+                final ProgressDialog progress = getWaitDialog();
+                progress.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ContactBE user = getController().getContactByName(name);
+                        if (user != null) {
+                            if (getController().addNewContact(user)) {
+                                showToastLong(R.string.new_contact_success);
+                            }
+                        } else {
+                            showToastLong(R.string.new_contact_not_new);
+                        }
+                        progress.dismiss();
+                        dialog.dismiss();
+                    }
+                }).start();
+            }
+        };
+        showCustomDialog(getString(R.string.find_user_dialog_title), null, R.layout.dialog_find_user, clickListener, getDoNothingClickListener());
     }
     //endregion
 
@@ -214,8 +250,17 @@ public abstract class AbstractActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
                 }
             };
+
             drawerToggle.setDrawerIndicatorEnabled(true);
             drawerLayout.addDrawerListener(drawerToggle);
+            Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_action_name);
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                }
+            });
 
             // set Click Listeners
             TextView newConversation = (TextView)findViewById(R.id.navigation_new_conversation);
@@ -251,7 +296,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
             newContact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showToastLong(R.string.functionality_not_implemented);
+                    showFindUserDialog();
                 }
             });
         }
