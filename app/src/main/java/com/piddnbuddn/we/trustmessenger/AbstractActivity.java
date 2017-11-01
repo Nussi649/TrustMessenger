@@ -295,7 +295,8 @@ public abstract class AbstractActivity extends AppCompatActivity {
             newConversation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showToastLong(R.string.functionality_not_implemented);
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    startActivity(NewConversationActivity.class);
                 }
             });
             newGroup.setOnClickListener(new View.OnClickListener() {

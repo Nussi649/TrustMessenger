@@ -47,6 +47,10 @@ public class OverviewActivity extends AbstractActivity {
         populateUI();
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
     private void getData() {
         controller.loadContactList();
         controller.loadChatList();
@@ -57,8 +61,8 @@ public class OverviewActivity extends AbstractActivity {
         mainContainer = (LinearLayout)findViewById(R.id.main_content);
         if (chats != null) {
             mainContainer.removeAllViews();
-            for (ChatBE chat : chats) {
-                final ChatBE finalChat = chat;
+            for (int i = 0; i < chats.size(); i++) {
+                final ChatBE finalChat = chats.get(chats.size()-(i+1));
                 ChatSegment chatSegment = new ChatSegment(this, finalChat, controller.loadFirstMessageOfChatFromDB(finalChat.id));
                 chatSegment.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -75,6 +79,7 @@ public class OverviewActivity extends AbstractActivity {
     private void populateUI() {
         setTitle(R.string.activity_overview);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        reloadChatsUI();
         buildDrawer();
     }
 

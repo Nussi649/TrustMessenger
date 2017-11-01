@@ -43,15 +43,23 @@ public class ConversationActivity extends AbstractActivity {
         populateUI();
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(OverviewActivity.class);
+    }
+
     private void loadMessages() {
         messages = getController().loadMessagesOfChatFromDB(chat.id);
+        if (messages == null) {
+            messages = new ArrayList<>();
+        }
     }
 
     private void populateUI() {
         setTitle(partner.getName());
         setContentView(R.layout.activity_conversation);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout container = (LinearLayout)findViewById(R.id.messages_container);
         for (MessageBE msg : messages) {
             container.addView(new MessageSegment(this, msg));

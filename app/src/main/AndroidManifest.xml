@@ -43,6 +43,9 @@
         <activity android:name=".SettingsActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:parentActivityName=".OverviewActivity" />
+        <activity android:name=".NewConversationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:parentActivityName=".OverviewActivity" />
     </application>
 
 </manifest>

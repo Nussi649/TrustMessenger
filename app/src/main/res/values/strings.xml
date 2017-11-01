@@ -47,6 +47,8 @@
     <string name="new_contact_not_new">The User you are searching for is already in your Contact List.</string>
     <string name="new_contact_success">The User was found, and his Public Key was added to your Contact List.</string>
     <string name="new_contact_not_existing">The User you are searching for does not exist.</string>
+    <string name="contact_open_conversation">Open Conversation</string>
+    <string name="contact_push">Push</string>
     <string name="default_contact_name">Sam Smith</string>
     <string name="buddy_1">Terry</string>
     <string name="buddy_2">John</string>
@@ -69,4 +71,5 @@
     <string name="message_segment_status_default">sent</string>
     <string name="message_segment_incoming_status">inc</string>
     <string name="message_send">Send</string>
+    <string name="new_conversation_title">Choose Conversationpartner</string>
 </resources>
