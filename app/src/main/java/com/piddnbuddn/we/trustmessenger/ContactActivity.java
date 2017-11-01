@@ -1,6 +1,7 @@
 package com.piddnbuddn.we.trustmessenger;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import backend.be.ContactBE;
 
@@ -24,6 +25,13 @@ public class ContactActivity extends AbstractActivity {
 
     @Override
     protected void endWorkingThread() {
+        populateUI();
+    }
 
+    private void populateUI() {
+        this.setContentView(R.layout.activity_contact);
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setTitle(contact.getName());
+        buildDrawer();
     }
 }

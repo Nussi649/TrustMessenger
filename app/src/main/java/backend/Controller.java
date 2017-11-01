@@ -554,7 +554,61 @@ public class Controller {
         return null;
     }
 
-    public boolean sendMessageServer(String signedMessage, String name) {
+    public boolean sendMessageServer(String signedMessage, ContactBE recipient) {
+        JSONObject postDataParams = new JSONObject();
+        try {
+            postDataParams.put(Const.KEY_SEND_SIGNED_MESSAGE, signedMessage);
+            postDataParams.put(Const.KEY_SEND_RECIPIENT, recipient.getName());
+            postDataParams.put(Const.KEY_SEND_SENDER, getModel().username);
+            URL url = new URL(Const.SERVER_URI);
+            httpClient = (HttpURLConnection) url.openConnection();
+            httpClient.setRequestMethod(Const.PROTOCOL_POST);
+        } catch (JSONException jsone) {
+            jsone.printStackTrace();
+            return false;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+        httpClient.setDoInput(true);
+        httpClient.setDoOutput(true);
+        httpClient.setReadTimeout(15000);
+        httpClient.setConnectTimeout(15000);
+        OutputStream outputPost;
+        BufferedWriter writer;
+        int responseCode;
+        try {
+            outputPost = new BufferedOutputStream(httpClient.getOutputStream());
+            writer = new BufferedWriter(new OutputStreamWriter(outputPost, "UTF-8"));
+            writer.write(getPostDataString(postDataParams));
+            writer.flush();
+            writer.close();
+            outputPost.close();
+            responseCode = httpClient.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+                in.close();
+                // here sb.toString() contains the answer
+                if (sb.toString().equals(Const.ANSWER_CODE_SUCCESS)) {
+                    return true;
+                }
+            } else {
+                Log.e("response code", new String("" + responseCode));
+                return false;
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return false;
     }
     // endregion
@@ -675,6 +729,10 @@ public class Controller {
         }
     }
 
+    private String getMessagesServerWork() {
+        return "";
+    }
+
     // endregion
 
     // region send/set Stuff
@@ -733,22 +791,6 @@ public class Controller {
     private void handleSetUserResponse(String response) {
         switch (response) {
             case Const.ANSWER_CODE_SUCCESS:
-                break;
-            case Const.ANSWER_CODE_USERNAME_NA:
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void handleGetUserResponse(String response) {
-        switch (response) {
-            case Const.ANSWER_CODE_USER:
-                try {
-                    JSONObject jsonResponse = new JSONObject(response);
-                } catch (JSONException jsone) {
-                    jsone.printStackTrace();
-                }
                 break;
             case Const.ANSWER_CODE_USERNAME_NA:
                 break;

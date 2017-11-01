@@ -207,18 +207,27 @@ public abstract class AbstractActivity extends AppCompatActivity {
             public void onClick(final DialogInterface dialog, int which) {
                 EditText edit = (EditText)((AlertDialog)dialog).findViewById(R.id.find_user_edit);
                 final String name = edit.getText().toString();
+                if (name.equals("")) {
+                    return;
+                }
                 final ProgressDialog progress = getWaitDialog();
                 progress.show();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        Looper.prepare();
                         ContactBE user = getController().getContactByName(name);
                         if (user != null) {
-                            if (getController().addNewContact(user)) {
-                                showToastLong(R.string.new_contact_success);
-                            }
-                        } else {
                             showToastLong(R.string.new_contact_not_new);
+                        } else {
+                            user = getController().getUserServer(name);
+                            if (user != null) {
+                                if (getController().addNewContact(user)) {
+                                    showToastLong(R.string.new_contact_success);
+                                }
+                            } else {
+                                showToastLong(R.string.new_contact_not_existing);
+                            }
                         }
                         progress.dismiss();
                         dialog.dismiss();
@@ -272,12 +281,14 @@ public abstract class AbstractActivity extends AppCompatActivity {
             contactList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
                     startActivity(ContactListActivity.class);
                 }
             });
             settings.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
                     startActivity(SettingsActivity.class);
                 }
             });
@@ -296,6 +307,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
             newContact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
                     showFindUserDialog();
                 }
             });
@@ -336,6 +348,9 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
