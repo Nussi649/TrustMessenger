@@ -251,6 +251,28 @@ public class Controller {
         db.endTransaction();
     }
 
+    public ChatBE saveNewChatToDB(ContactBE contact) {
+        String table_name = FeedReaderContract.FeedEntryChats.TABLE_NAME;
+        int seqVal = getSequenceValue(table_name);
+        ChatBE newChat = new ChatBE(seqVal, contact);
+        newChat.setTimer(Const.DEFAULT_DESTRUCTION_TIMER);
+        String sql = "INSERT INTO " + table_name + " (id, partner, timer) VALUES (" +
+                seqVal + ",'" +
+                newChat.name + "'," +
+                newChat.destructionTimer + ")";
+        db.beginTransaction();
+        try {
+            db.execSQL(sql);
+            db.setTransactionSuccessful();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            return null;
+        }
+        db.endTransaction();
+        model.chats.add(newChat);
+        return newChat;
+    }
+
     public MessageBE loadFirstMessageOfChatFromDB(int id) {
         String sql = "SELECT * FROM messages WHERE partner=" + id + " ORDER BY id DESC";
         db.beginTransaction();
