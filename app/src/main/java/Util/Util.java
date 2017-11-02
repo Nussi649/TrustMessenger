@@ -38,4 +38,37 @@ public class Util {
         byte[] bytes = b.toByteArray();
         return new String(bytes);
     }
+
+    public static String secondsToString(int seconds) {
+        String re = "";
+        int value = seconds;
+        if (value >= 60) {
+            int rest = value % 60;
+            if (rest != 0) {
+                re = rest + "s" + re;
+            }
+            value = (value - rest) / 60;
+        } else {
+            return value + "s";
+        }
+        if (value >= 60) {
+            int rest = value % 60;
+            if (rest != 0) {
+                re = rest + "m" + re;
+            }
+            value = (value - rest) / 60;
+        } else {
+            return value + "m" + re;
+        }
+        if (value >= 24) {
+            int rest = value % 24;
+            if (rest != 0) {
+                re = rest + "h" + re;
+            }
+            value = (value - rest) / 24;
+        } else {
+            return value + "h" + re;
+        }
+        return value + "d" + re;
+    }
 }

@@ -46,6 +46,9 @@
         <activity android:name=".NewConversationActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:parentActivityName=".OverviewActivity" />
+        <activity android:name=".ChatOverviewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:parentActivityName=".ConversationActivity" />
     </application>
 
 </manifest>

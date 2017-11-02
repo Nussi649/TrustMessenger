@@ -38,6 +38,7 @@
     <string name="navigation_close">Close</string>
     <string name="navigation_new_chat">New Conversation</string>
     <string name="navigation_new_group">Create Group</string>
+    <string name="navigation_overview">Home</string>
     <string name="navigation_new_contact">Add Contact</string>
     <string name="navigation_contacts">Contact List</string>
     <string name="navigation_settings">Settings</string>
@@ -69,7 +70,14 @@
     <string name="message_segment_content_default">Hey dude!</string>
     <string name="message_segment_time_default">4:20 pm</string>
     <string name="message_segment_status_default">sent</string>
+    <string name="message_title_default">Some Username</string>
     <string name="message_segment_incoming_status">inc</string>
     <string name="message_send">Send</string>
     <string name="new_conversation_title">Choose Conversationpartner</string>
+    <!-- Strings used in Chat Overview -->
+    <string name="chat_overview_destruct_title">Selfdestruction Timer:</string>
+    <string name="chat_overview_media_title">Shared Media</string>
+    <string name="chat_overview_tbd_title">To be developed...</string>
+    <string name="chat_overview_destruct_value_default">24h</string>
+    <string name="chat_overview_title_default">Some Username</string>
 </resources>

@@ -10,12 +10,12 @@
 
     <!-- Title Style-->
     <style name="titleStyle">
-        <item name="android:textSize">24pt</item>
+        <item name="android:textSize">12pt</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="listStyle">
-        <item name="android:textSize">12pt</item>
+        <item name="android:textSize">10pt</item>
         <item name="android:textStyle">bold</item>
     </style>
 

@@ -241,8 +241,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     protected void buildDrawer() {
         final DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         if (drawerLayout != null) {
             drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_open, R.string.navigation_close) {
                 @Override
@@ -272,12 +270,20 @@ public abstract class AbstractActivity extends AppCompatActivity {
             });
 
             // set Click Listeners
+            TextView overview = (TextView)findViewById(R.id.navigation_overview);
             TextView newConversation = (TextView)findViewById(R.id.navigation_new_conversation);
             TextView newGroup = (TextView)findViewById(R.id.navigation_new_group);
             TextView newContact = (TextView)findViewById(R.id.navigation_new_contact);
             TextView contactList = (TextView)findViewById(R.id.navigation_contact_list);
             TextView settings = (TextView)findViewById(R.id.navigation_settings);
 
+            overview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    startActivity(OverviewActivity.class);
+                }
+            });
             contactList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
