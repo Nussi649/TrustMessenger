@@ -19,4 +19,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="appbarStyle">
+        <item name="android:textSize">11pt</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

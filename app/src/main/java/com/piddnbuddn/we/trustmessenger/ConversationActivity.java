@@ -58,6 +58,8 @@ public class ConversationActivity extends AbstractActivity {
     private void populateUI() {
         setContentView(R.layout.activity_conversation);
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout container = (LinearLayout)findViewById(R.id.messages_container);
         for (MessageBE msg : messages) {
             container.addView(new MessageSegment(this, msg));
@@ -70,9 +72,10 @@ public class ConversationActivity extends AbstractActivity {
 
             }
         });
-        buildDrawer();
+        setTitle("");
         ((TextView)findViewById(R.id.toolbar_title)).setText(partner.getName());
         findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 startActivity(ChatOverviewActivity.class);

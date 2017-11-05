@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/chat_overview_title_default"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
             android:id="@+id/toolbar_title"/>
 
     </android.support.v7.widget.Toolbar>
@@ -65,6 +66,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:text="@string/chat_overview_tbd_title" />
+        android:text="@string/prea_tbd" />
 
 </LinearLayout>

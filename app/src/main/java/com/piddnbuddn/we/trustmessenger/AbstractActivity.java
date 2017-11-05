@@ -355,8 +355,10 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        if (drawerToggle != null) {
+            if (drawerToggle.onOptionsItemSelected(item)) {
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

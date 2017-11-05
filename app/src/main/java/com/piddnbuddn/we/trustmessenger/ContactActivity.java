@@ -5,7 +5,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import Util.Util;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 
@@ -58,6 +60,11 @@ public class ContactActivity extends AbstractActivity {
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         setTitle(contact.getName());
         buildDrawer();
+        TextView pkeyValue = (TextView)findViewById(R.id.contact_public_key_value);
+        TextView pkeyModul = (TextView)findViewById(R.id.contact_public_key_modul);
+
+        pkeyValue.setText(Util.bigIntToString(contact.getPublicKey().getValue()));
+        pkeyModul.setText(Util.bigIntToString(contact.getPublicKey().getModul()));
     }
 
     private void openConversation() {

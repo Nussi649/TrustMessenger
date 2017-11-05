@@ -66,6 +66,7 @@
     <string name="settings_save_db_error">There was an error saving the DB</string>
     <!-- Strings used in pre-Alpha -->
     <string name="functionality_not_implemented">This functionality has not been implemented yet.</string>
+    <string name="prea_tbd">To be developed...</string>
     <!-- Strings used in Conversation -->
     <string name="message_segment_content_default">Hey dude!</string>
     <string name="message_segment_time_default">4:20 pm</string>
@@ -77,7 +78,14 @@
     <!-- Strings used in Chat Overview -->
     <string name="chat_overview_destruct_title">Selfdestruction Timer:</string>
     <string name="chat_overview_media_title">Shared Media</string>
-    <string name="chat_overview_tbd_title">To be developed...</string>
     <string name="chat_overview_destruct_value_default">24h</string>
     <string name="chat_overview_title_default">Some Username</string>
+    <string name="chat_overview_title_prefix">Chat with</string>
+    <!-- Strings used in Contact Activity -->
+    <string name="contact_public_key_title">Public Key</string>
+    <string name="contact_public_key_value_title">Key:</string>
+    <string name="contact_public_key_modul_title">Modul:</string>
+    <string name="contact_public_key_value_default">dlishflajkzugshjvabfmhmyjesgfkuszegkjysfmsydjfb</string>
+    <string name="contact_public_key_modul_default">aflsihfkjfhglsiefhmjshbgfmhxbkyskdjgbsklirghliuhysldhfykjhesfblyksuh</string>
+    <string name="contact_chats_title">Open Chats</string>
 </resources>
