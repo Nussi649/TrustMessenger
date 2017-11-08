@@ -19,6 +19,7 @@ public class Model {
     public PrivateKey privateKey;
     public String username;
     public String password;
+    public String DATABASE_NAME;
 
     public List<ContactBE> contacts;
     public List<ChatBE> chats;

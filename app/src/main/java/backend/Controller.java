@@ -508,8 +508,8 @@ public class Controller {
             File sd = Environment.getExternalStorageDirectory();
 
             if (sd.canWrite()) {
-                String currentDBPath = FeedReaderDbHelper.DATABASE_PATH + FeedReaderDbHelper.DATABASE_NAME;
-                String backupDBPath = FeedReaderDbHelper.DATABASE_NAME;
+                String currentDBPath = FeedReaderDbHelper.DATABASE_PATH + getModel().DATABASE_NAME;
+                String backupDBPath = getModel().DATABASE_NAME;
                 File currentDB = new File(currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
 

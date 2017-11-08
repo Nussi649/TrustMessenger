@@ -47,6 +47,7 @@
     <string name="add_contact_message">Username:</string>
     <string name="new_contact_not_new">The User you are searching for is already in your Contact List.</string>
     <string name="new_contact_success">The User was found, and his Public Key was added to your Contact List.</string>
+    <string name="new_contact_error">An error happened.</string>
     <string name="new_contact_not_existing">The User you are searching for does not exist.</string>
     <string name="contact_open_conversation">Open Conversation</string>
     <string name="contact_push">Push</string>
