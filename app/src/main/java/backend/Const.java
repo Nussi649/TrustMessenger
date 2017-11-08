@@ -45,4 +45,7 @@ public class Const {
     public static final String ANSWER_CODE_SUCCESS = "1";
     public static final String ANSWER_CODE_USERNAME_NA = "userNA";
     public static final String ANSWER_CODE_USER = "user";
+
+    // DATABASE STUFF
+    public static final String DATABASE_NAME_SUFFIX = "-db.db";
 }

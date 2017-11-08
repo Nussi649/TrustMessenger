@@ -193,7 +193,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    protected void showCustomDialog(String title, String message, int layoutID, DialogInterface.OnClickListener acceptListener) {
+    protected void showCustomDialog(String title, int layoutID, DialogInterface.OnClickListener acceptListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
         builder.setPositiveButton(R.string.dialog_accept, acceptListener);
@@ -224,6 +224,8 @@ public abstract class AbstractActivity extends AppCompatActivity {
                             if (user != null) {
                                 if (getController().addNewContact(user)) {
                                     showToastLong(R.string.new_contact_success);
+                                } else {
+                                    showToastLong(R.string.new_contact_error);
                                 }
                             } else {
                                 showToastLong(R.string.new_contact_not_existing);

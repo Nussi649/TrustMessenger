@@ -49,9 +49,6 @@ public class LoginActivity extends AbstractActivity {
             requestPermission(getNextRequestedPermission());
         }
         controller.setResources(getResources());
-        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this);
-        dbHelper.openDataBase();
-        controller.setDb(dbHelper.db);
         dialog.dismiss();
     }
 
@@ -127,6 +124,14 @@ public class LoginActivity extends AbstractActivity {
         }
     }
 
+    private void doLogin() {
+        getModel().DATABASE_NAME = getModel().username + Const.DATABASE_NAME_SUFFIX;
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this, getModel().DATABASE_NAME);
+        dbHelper.openDataBase(getModel().DATABASE_NAME);
+        controller.setDb(dbHelper.db);
+        startActivity(OverviewActivity.class);
+    }
+
     private void configureUI() {
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         Button delete = (Button) findViewById(R.id.login_button_delete);
@@ -140,7 +145,7 @@ public class LoginActivity extends AbstractActivity {
                 create.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(OverviewActivity.class);
+                        doLogin();
                     }
                 });
                 delete.setOnClickListener(new View.OnClickListener() {

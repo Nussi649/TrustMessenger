@@ -18,13 +18,14 @@ import Util.FeedReaderContract;
 public class FeedReaderDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_PATH = "/data/user/0/com.piddnbuddn.we.trustmessenger/databases/";
-    public static final String DATABASE_NAME = "TrustMSG.db";
-    public static final String DATABASE_EXTERNAL_PATH = Environment.getExternalStorageDirectory() + File.separator + "/DataBase/" + File.separator + DATABASE_NAME;
+    public String DATABASE_NAME;
+    public static final String DATABASE_EXTERNAL_PATH = Environment.getExternalStorageDirectory() + File.separator + "/DataBase/" + File.separator + "TrustMSG.db";
 
     public SQLiteDatabase db;
 
-    public FeedReaderDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public FeedReaderDbHelper(Context context, String name) {
+        super(context, name, null, DATABASE_VERSION);
+        DATABASE_NAME = name;
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -50,19 +51,22 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
     }
 
-    public boolean checkDataBase() {
+    // returns true if DB with given name exists, false otherwise
+    public static boolean checkDataBase(String name) {
         SQLiteDatabase checkDB = null;
         try{
-            String myPath = DATABASE_PATH + DATABASE_NAME;
+            String myPath = DATABASE_PATH + name;
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             e.printStackTrace();
         }
         return checkDB != null;
     }
-    public void openDataBase() throws SQLiteException {
-        if (checkDataBase()) {
-            String myPath = DATABASE_PATH + DATABASE_NAME;
+
+
+    public void openDataBase(String name) throws SQLiteException {
+        if (checkDataBase(name)) {
+            String myPath = DATABASE_PATH + name;
             db = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
             String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=?";
             String[] args = {FeedReaderContract.FeedEntryMessages.TABLE_NAME};
