@@ -38,7 +38,7 @@ public class ContactActivity extends AbstractActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_contact, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -68,9 +68,9 @@ public class ContactActivity extends AbstractActivity {
     }
 
     private void openConversation() {
-        ChatBE chat = getController().saveNewChatToDB(contact);
+        ChatBE chat = getController().getChatByName(contact.getName());
         if (chat == null) {
-            return;
+            chat = getController().saveNewChatToDB(contact);
         }
         getController().setCurContact(contact);
         getController().setCurChat(chat);

@@ -1,6 +1,5 @@
 package backend;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -8,7 +7,6 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.JsonReader;
 import android.util.Log;
 
 import com.piddnbuddn.we.trustmessenger.R;
@@ -27,10 +25,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
@@ -486,7 +482,7 @@ public class Controller {
             String sql = "INSERT INTO messages (id, in_out, partner, content, time) VALUES (" +
                     getSequenceValue(FeedReaderContract.FeedEntryMessages.TABLE_NAME) + ",'" +
                     (msg instanceof IncMessageBE ? "i" : "o") + "'," +
-                    getFirstChatByName(msg.getPartner().getName()).id + ",'" +
+                    getChatByName(msg.getPartner().getName()).id + ",'" +
                     msg.content + "','" +
                     sdf.format(msg.timeSent) + "')";
             try {
@@ -840,7 +836,7 @@ public class Controller {
         return null;
     }
 
-    public ChatBE getFirstChatByName(String name) {
+    public ChatBE getChatByName(String name) {
         for (ChatBE c : model.chats) {
             if (c.name.equals(name)) {
                 return c;
