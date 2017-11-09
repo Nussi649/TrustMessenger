@@ -45,7 +45,11 @@ public class NewConversationActivity extends AbstractActivity {
                 @Override
                 public void onClick(View v) {
                     getController().setCurContact(finalContact);
-                    getController().setCurChat(getController().saveNewChatToDB(finalContact));
+                    if (getController().getChatByName(finalContact.getName()) == null) {
+                        getController().setCurChat(getController().saveNewChatToDB(finalContact));
+                    } else {
+                        getController().setCurChat(getController().getChatByName(finalContact.getName()));
+                    }
                     startActivity(ConversationActivity.class);
                 }
             });
