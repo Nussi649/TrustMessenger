@@ -42,9 +42,6 @@ public abstract class AbstractActivity extends AppCompatActivity {
             model = getModel();
         }
         startWorkingThread();
-        if (getController().checkPasswordUsage()) {
-            showSetPasswordDialog();
-        }
     }
 
     public Model getModel() {
@@ -273,7 +270,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
             // set Click Listeners
             TextView overview = (TextView)findViewById(R.id.navigation_overview);
-            TextView newConversation = (TextView)findViewById(R.id.navigation_new_conversation);
+            TextView logout = (TextView)findViewById(R.id.navigation_logout);
             TextView newGroup = (TextView)findViewById(R.id.navigation_new_group);
             TextView newContact = (TextView)findViewById(R.id.navigation_new_contact);
             TextView contactList = (TextView)findViewById(R.id.navigation_contact_list);
@@ -300,11 +297,11 @@ public abstract class AbstractActivity extends AppCompatActivity {
                     startActivity(SettingsActivity.class);
                 }
             });
-            newConversation.setOnClickListener(new View.OnClickListener() {
+            logout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     drawerLayout.closeDrawer(Gravity.LEFT);
-                    startActivity(NewConversationActivity.class);
+                    doLogout();
                 }
             });
             newGroup.setOnClickListener(new View.OnClickListener() {
@@ -341,7 +338,11 @@ public abstract class AbstractActivity extends AppCompatActivity {
         } else {
             showToastLong(R.string.toast_password_set_fail);
         }
+    }
 
+    private void doLogout() {
+        getController().resetModel();
+        startActivity(LoginActivity.class);
     }
 
 

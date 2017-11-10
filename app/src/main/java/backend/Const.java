@@ -8,9 +8,10 @@ public class Const {
     public static final String CREDITS = "Piddn&Buddn Co.";
 
     // FILENAMES
-    public static final String FILENAME_USERNAME = "username";
+    public static final String FILENAME_USERNAMES = "user";
     public static final String FILENAME_PASSWORD = "credentials";
     public static final String FILENAME_PRIVATE_KEY = "privateKey";
+
 
     // PERMISSION CODES
     public static final int REQUEST_READ_CONTACTS = 1;

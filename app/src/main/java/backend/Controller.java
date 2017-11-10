@@ -32,6 +32,7 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -55,6 +56,7 @@ import static Util.Util.sha256;
 public class Controller {
 
     public static Controller instance;
+    private Resources resources;
     Model model;
     SQLiteDatabase db;
     SimpleDateFormat sdf = new SimpleDateFormat(Const.DATETIME_FORMAT);
@@ -75,6 +77,10 @@ public class Controller {
 
     public Model getModel() {
         return model;
+    }
+
+    public void resetModel() {
+        model = new Model();
     }
 
     // region Input/Output
@@ -127,24 +133,17 @@ public class Controller {
 
     // region Resources
     public void setResources(Resources res) {
-        model.resources = res;
+        resources = res;
     }
 
-    public String getString(int ResID) {
-        return model.resources.getString(ResID);
+    private String getString(int ResID) {
+        return resources.getString(ResID);
     }
     // endregion
 
     // region Password/Username
-    public void getAccountInfo(Context context) {
-        String username = readInternal(context, Const.FILENAME_USERNAME);
-        String password = readInternal(context, Const.FILENAME_PASSWORD);
-        if (username != "") {
-            model.username = username;
-        }
-        if (password != "") {
-            model.password = password;
-        }
+    public void setUsername(String username) {
+        model.username = username;
     }
 
     public boolean checkPasswordUsage() {
@@ -159,6 +158,14 @@ public class Controller {
     public boolean setPassword(String newPassword, Context context) {
         model.password = sha256(newPassword);
         return writeInternal(context, Const.FILENAME_PASSWORD, newPassword);
+    }
+
+    public boolean deleteKey(String username, Context context) {
+        // SEND TO SERVER THAT KEY WILL NO LONGER BE USED
+
+        // DELETE DATABASE
+        deleteInternal(context, username + Const.DATABASE_NAME_SUFFIX);
+        return false;
     }
     // endregion
 
@@ -531,6 +538,11 @@ public class Controller {
 
     public void loadChatList() {
         loadChatsFromDB();
+    }
+
+    public List<String> loadLocalNames(Context context) {
+        String[] internal = readInternal(context, Const.FILENAME_USERNAMES).split("\n");
+        return new ArrayList<>(Arrays.asList(internal));
     }
     // endregion
 

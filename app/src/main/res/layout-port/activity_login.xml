@@ -11,31 +11,66 @@
     tools:context="com.piddnbuddn.we.trustmessenger.LoginActivity">
 
 
-    <TextView
-        android:id="@+id/login_textview_welcome"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
-        android:text="@string/welcome_default" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/login_button_create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="59dp"
-        android:text="@string/action_register"
-        android:layout_below="@+id/login_textview_welcome"
-        android:layout_centerHorizontal="true" />
+        <TextView
+            android:id="@+id/login_textview_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/welcome_default" />
 
-    <Button
-        android:id="@+id/login_button_delete"
-        android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/selectionSpinner"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/login_textview_welcome"
+            android:layout_below="@+id/login_textview_welcome"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/login_button_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/selectionSpinner"
+            android:layout_centerHorizontal="true"
+            android:text="@string/login_button" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_button_create"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="73dp"
-        android:text="@string/delete_key"
-        android:visibility="visible" />
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/login_button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
+            android:text="@string/delete_key"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/login_button_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/login_button_delete"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1"
+            android:text="@string/action_register" />
+    </LinearLayout>
+
 </RelativeLayout>

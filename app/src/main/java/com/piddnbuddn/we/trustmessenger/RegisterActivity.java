@@ -6,6 +6,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import backend.Const;
 import backend.PrivateKey;
 import backend.PublicKey;
@@ -18,7 +22,7 @@ public class RegisterActivity extends AbstractActivity {
 
     private static final int GENERATE_KEY = 1;
     private static final int SEND_TO_SERVER = 2;
-    private static final int TEST = 3;
+    private static final int UPDATE_USER_STORAGE = 3;
 
     private PrivateKey newPrivKey;
     private PublicKey newPubKey;
@@ -46,8 +50,20 @@ public class RegisterActivity extends AbstractActivity {
             case SEND_TO_SERVER:
                 sendToServer(newPubKey, signedUsername);
                 break;
-            case TEST:
+            case UPDATE_USER_STORAGE:
                 getModel().username = username;
+                List<String> users = getController().loadLocalNames(this);
+                if (users.get(0).equals("")) {
+                    users.clear();
+                }
+                users.add(username);
+                String write = users.get(0);
+                int index = 1;
+                while (users.size() > index) {
+                    write += "\n" + users.get(index);
+                    index++;
+                }
+                getController().writeInternal(this, Const.FILENAME_USERNAMES, write);
                 break;
             default:
                 break;
@@ -64,10 +80,9 @@ public class RegisterActivity extends AbstractActivity {
                 getModel().username = username;
                 getModel().privateKey = newPrivKey;
                 getModel().publicKey = newPubKey;
-                startActivity(OverviewActivity.class);
+                startThreadWithFinish(UPDATE_USER_STORAGE);
                 break;
-            case TEST:
-                getController().writeInternal(this, Const.FILENAME_USERNAME, username);
+            case UPDATE_USER_STORAGE:
                 startActivity(LoginActivity.class);
                 break;
             default:
@@ -98,7 +113,7 @@ public class RegisterActivity extends AbstractActivity {
             showToast(R.string.error_name_empty);
         } else {
             username = name;
-            startThreadWithFinish(TEST);
+            startThreadWithFinish(UPDATE_USER_STORAGE);
         }
     }
 }

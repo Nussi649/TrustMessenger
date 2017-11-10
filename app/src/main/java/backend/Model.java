@@ -13,8 +13,6 @@ import backend.be.ContactBE;
 
 public class Model {
 
-    public Resources resources;
-
     public PublicKey publicKey;
     public PrivateKey privateKey;
     public String username;

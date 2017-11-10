@@ -8,8 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import Util.FeedReaderDbHelper;
 import backend.Const;
@@ -23,12 +28,22 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  */
 public class LoginActivity extends AbstractActivity {
 
+    List<String> possibleUsers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         onAppStartup();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        configureUI();
+    }
+
+    @Override
+    protected void workingThread() {
+        possibleUsers = getController().loadLocalNames(this);
+    }
+
+    @Override
+    protected void endWorkingThread() {
+        populateUI();
     }
 
     private void initController() {
@@ -44,7 +59,6 @@ public class LoginActivity extends AbstractActivity {
         ProgressDialog dialog = getWaitDialog();
         dialog.show();
         initController();
-        getController().getAccountInfo(this);
         if (mayRequestPermissions()) {
             requestPermission(getNextRequestedPermission());
         }
@@ -132,44 +146,64 @@ public class LoginActivity extends AbstractActivity {
         startActivity(OverviewActivity.class);
     }
 
-    private void configureUI() {
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+    private void populateUI() {
+        setContentView(R.layout.activity_login);
+        TextView welcome = (TextView) findViewById(R.id.login_textview_welcome);
         Button delete = (Button) findViewById(R.id.login_button_delete);
+        Button login = (Button) findViewById(R.id.login_button_login);
         Button create = (Button) findViewById(R.id.login_button_create);
-        if (model.username != null) {
-            if (model.username != "") {
-                TextView welcome = (TextView) findViewById(R.id.login_textview_welcome);
-                welcome.setText(getString(R.string.welcome) + " " + model.username);
-                delete.setVisibility(View.VISIBLE);
-                create.setText(getString(R.string.login_button));
-                create.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        doLogin();
-                    }
-                });
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        deleteUsername();
-                    }
-                });
-            }
-        } else {
-            delete.setVisibility(View.GONE);
-            create.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(RegisterActivity.class);
-                }
-            });
+        final Spinner choice = (Spinner) findViewById(R.id.selectionSpinner);
+
+        if (possibleUsers.size() > 0) {
+            welcome.setText(getText(R.string.prompt_register_name));
         }
+        choice.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, possibleUsers));
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doLogin();
+            }
+        });
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteUsername(choice.getSelectedItem().toString());
+            }
+        });
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(RegisterActivity.class);
+            }
+        });
     }
 
-    private void deleteUsername() {
-        getController().deleteInternal(this, Const.FILENAME_USERNAME);
-        getModel().username = null;
-        startActivity(LoginActivity.class);
+    private void deleteUsername(String name) {
+        // TODO
+        List<String> newList = new ArrayList<>();
+        String write = "";
+        if (possibleUsers.size() > 0) {
+            for (String s : possibleUsers) {
+                if (!s.equals(name)) {
+                    write += s + "\n";
+                    newList.add(s);
+                }
+            }
+            if (write.length() >= 2) {
+                write = write.substring(0, write.length() - 1);
+            }
+            controller.writeInternal(this, Const.FILENAME_USERNAMES, write);
+        } else {
+            controller.deleteInternal(this, Const.FILENAME_USERNAMES);
+        }
+        possibleUsers = newList;
+        if (possibleUsers.size() == 0) {
+            String[] empty = {""};
+            ((Spinner) findViewById(R.id.selectionSpinner)).setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, empty));
+        } else {
+            ((Spinner) findViewById(R.id.selectionSpinner)).setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, possibleUsers));
+        }
+        controller.deleteKey(name, this);
     }
 }
 
