@@ -16,7 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import Util.FeedReaderDbHelper;
+import Util.FeedReaderBackgroundDBHelper;
 import backend.Const;
 import backend.Controller;
 
@@ -140,7 +140,7 @@ public class LoginActivity extends AbstractActivity {
 
     private void doLogin() {
         getModel().DATABASE_NAME = getModel().username + Const.DATABASE_NAME_SUFFIX;
-        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this, getModel().DATABASE_NAME);
+        FeedReaderBackgroundDBHelper dbHelper = new FeedReaderBackgroundDBHelper(this, getModel().DATABASE_NAME);
         dbHelper.openDataBase(getModel().DATABASE_NAME);
         controller.setDb(dbHelper.db);
         startActivity(OverviewActivity.class);

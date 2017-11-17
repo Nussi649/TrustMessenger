@@ -39,7 +39,6 @@ import java.util.List;
 
 import Util.Util;
 import Util.FeedReaderContract;
-import Util.FeedReaderDbHelper;
 import backend.be.ChatBE;
 import backend.be.ContactBE;
 import backend.be.CursorToBETransform;
@@ -511,7 +510,7 @@ public class Controller {
             File sd = Environment.getExternalStorageDirectory();
 
             if (sd.canWrite()) {
-                String currentDBPath = FeedReaderDbHelper.DATABASE_PATH + getModel().DATABASE_NAME;
+                String currentDBPath = Util.FeedReaderBackgroundDBHelper.DATABASE_PATH + getModel().DATABASE_NAME;
                 String backupDBPath = getModel().DATABASE_NAME;
                 File currentDB = new File(currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
