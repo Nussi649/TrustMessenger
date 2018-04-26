@@ -49,4 +49,5 @@ public class Const {
 
     // DATABASE STUFF
     public static final String DATABASE_NAME_SUFFIX = "-db.db";
+    public static final String DATABASE_BACKGROUND_NAME = "bg-db.db";
 }
